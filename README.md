@@ -39,6 +39,10 @@ options:
 	position: "bottom"
 ```
 
+![image](https://user-images.githubusercontent.com/150803/119069882-87c95700-ba19-11eb-8cef-02d1e021d1a2.png)
+
+```
+
 #### WordCloud Demo
 ```chartsview
 #-----------------#
@@ -371,6 +375,9 @@ options:
 	    lineWidth: 3
 ```
 
+![image](https://user-images.githubusercontent.com/150803/119069991-bba47c80-ba19-11eb-873f-847563daea39.png)
+
+
 #### Treemap
 ```chartsview
 #-----------------#
@@ -431,6 +438,9 @@ data:
 options:
   colorField: "name"
 ```
+
+![image](https://user-images.githubusercontent.com/150803/119070047-decf2c00-ba19-11eb-9d59-21c051da593c.png)
+
 
 ### Manually installing the plugin
 
