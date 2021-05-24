@@ -1,4 +1,4 @@
-import yaml from "js-yaml";
+import parseYaml from "obsidian";
 import Charts from '@ant-design/charts';
 import { ChartProps } from "./components/Chart";
 
@@ -9,7 +9,7 @@ interface DataProps {
 }
 
 export function parseConfig(content: string): ChartProps {
-    const dataProps = yaml.load(content) as DataProps;
+    const dataProps = parseYaml.parseYaml(content) as DataProps;
     const type = dataProps["type"];
 
     // @ts-ignore
