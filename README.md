@@ -443,6 +443,65 @@ options:
 
 ![image](https://user-images.githubusercontent.com/150803/119070047-decf2c00-ba19-11eb-9d59-21c051da593c.png)
 
+### DualAxes
+```chartsview
+#-----------------#
+#- chart type    -#
+#-----------------#
+type: DualAxes
+
+#-----------------#
+#- chart data    -#
+#-----------------#
+data:
+  -
+    - time: "2019-03"
+      value: 350
+      count: 800
+    - time: "2019-04"
+      value: 900
+      count: 600
+    - time: "2019-05"
+      value: 300
+      count: 400
+    - time: "2019-06"
+      value: 450
+      count: 380
+    - time: "2019-07"
+      value: 470
+      count: 22
+  -
+    - time: "2019-03"
+      value: 350
+      count: 800
+    - time: "2019-04"
+      value: 900
+      count: 600
+    - time: "2019-05"
+      value: 300
+      count: 400
+    - time: "2019-06"
+      value: 450
+      count: 380
+    - time: "2019-07"
+      value: 470
+      count: 22
+
+#-----------------#
+#- chart options -#
+#-----------------#
+options:
+  xField: 'time'
+  yField: ['value', 'count']
+  geometryOptions:
+    - geometry: 'column'
+    - geometry: 'line'
+      lineStyle:
+	    lineWidth: 2
+```
+
+![image](https://user-images.githubusercontent.com/150803/119250319-e6393580-bbd1-11eb-8d18-07cbb06a110e.png)
+
 
 ### Manually installing the plugin
 
