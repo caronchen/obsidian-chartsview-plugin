@@ -443,7 +443,7 @@ options:
 
 ![image](https://user-images.githubusercontent.com/150803/119070047-decf2c00-ba19-11eb-9d59-21c051da593c.png)
 
-### DualAxes
+#### DualAxes
 ```chartsview
 #-----------------#
 #- chart type    -#
@@ -498,7 +498,7 @@ options:
       min: 0
       label:
         formatter:
-		      function formatter(val) {
+          function formatter(val) {
             return ''.concat(val, '个');
           }
   geometryOptions:
@@ -508,8 +508,7 @@ options:
 	    lineWidth: 2
 ```
 
-![image](https://user-images.githubusercontent.com/150803/119250319-e6393580-bbd1-11eb-8d18-07cbb06a110e.png)
-
+![image](https://user-images.githubusercontent.com/150803/119969638-618b5480-bfe1-11eb-8a36-0a5d60408b00.png)
 
 ### Manually installing the plugin
 
