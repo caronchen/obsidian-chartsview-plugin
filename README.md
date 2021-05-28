@@ -6,7 +6,7 @@ This is a charts view plugin for Obsidian (https://obsidian.md), based on [Ant D
 
 ### How to use
 
-#### Pie Demo
+#### Pie
 ```chartsview
 #-----------------#
 #- chart type    -#
