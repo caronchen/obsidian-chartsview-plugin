@@ -493,6 +493,14 @@ data:
 options:
   xField: 'time'
   yField: ['value', 'count']
+  yAxis:
+    value:
+      min: 0
+      label:
+        formatter:
+		      function formatter(val) {
+            return ''.concat(val, '个');
+          }
   geometryOptions:
     - geometry: 'column'
     - geometry: 'line'

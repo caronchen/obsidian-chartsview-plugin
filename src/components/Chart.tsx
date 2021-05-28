@@ -6,8 +6,10 @@ export interface ChartProps {
   config: ConfigProps;
 }
 
+export type DataType = object[] | object;
+
 interface ConfigProps {
-  data: {}[] | {};
+  data: DataType;
   theme?: string | object;
 }
 
