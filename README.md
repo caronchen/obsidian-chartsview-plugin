@@ -43,7 +43,6 @@ options:
 
 ![image](https://user-images.githubusercontent.com/150803/119069882-87c95700-ba19-11eb-8cef-02d1e021d1a2.png)
 
-```
 
 #### WordCloud Demo
 ```chartsview
