@@ -9,7 +9,7 @@ export interface ChartProps {
 export type DataType = object[] | object;
 
 interface ConfigProps {
-  data: DataType;
+  data?: DataType;
   theme?: string | object;
 }
 

@@ -11,7 +11,8 @@ interface Options {
 interface DataProps {
     type: string;
     options?: Options;
-    data: DataType;
+    data?: DataType;
+    [key: string]: DataType | string;
 }
 
 export function parseConfig(content: string): ChartProps {
@@ -24,22 +25,21 @@ export function parseConfig(content: string): ChartProps {
         throw new Error(`Unsupported chart type ${type}.`);
     }
 
-    const data: DataType = parseData(dataProps);
+
+    const data: DataType = dataProps["data"];
     const options = stringToFunction(dataProps["options"] || {});
 
-    return {
-        type,
-        config: { data, ...options }
-    };
-}
-
-function parseData(dataProps: DataProps): DataType {
-    const data = dataProps["data"];
-    if (data !== undefined) {
-        return data;
+    if (type == "MultiView" || type == "Mix") {
+        return {
+            type,
+            config: parseMultiViewConfig(dataProps, data, options)
+        };
+    } else {
+        return {
+            type,
+            config: { data, ...options }
+        };
     }
-
-    throw new Error('Required data property is missing.');
 }
 
 function stringToFunction(options: Options): object {
@@ -56,4 +56,27 @@ function stringToFunction(options: Options): object {
         }
     }
     return options;
+}
+
+function parseMultiViewConfig(dataProps: DataProps, data: DataType, options: Options): {} {
+    const temp = new Map<string, any>();
+    const views: {}[] = [];
+
+    for (const key in dataProps) {
+        const keyParts = key.split(".");
+        if (keyParts.length !== 2
+            || (keyParts[0] !== "options" && keyParts[0] !== "data")) {
+            continue;
+        }
+
+        const view = temp.get(keyParts[1]) || {};
+        view[keyParts[0]] = dataProps[key];
+        temp.set(keyParts[1], view);
+    }
+
+    temp.forEach(function (v) {
+        views.push({ data: v["data"] || data, ...v["options"] });
+    });
+
+    return { views, ...options };
 }
