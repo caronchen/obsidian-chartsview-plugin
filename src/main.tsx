@@ -5,6 +5,7 @@ import { MarkdownPostProcessorContext, Plugin } from 'obsidian';
 import { Chart } from './components/Chart';
 import { parseConfig } from './parser';
 import { ChartsViewPluginSettings, ChartsViewSettingTab, DEFAULT_SETTINGS } from './settings';
+import { TEMPLATES } from './templates';
 
 export default class ChartsViewPlugin extends Plugin {
 	settings: ChartsViewPluginSettings;
@@ -31,6 +32,24 @@ export default class ChartsViewPlugin extends Plugin {
 		await this.loadSettings();
 		this.addSettingTab(new ChartsViewSettingTab(this.app, this));
 		this.registerMarkdownCodeBlockProcessor("chartsview", this.ChartsViewProcessor.bind(this));
+
+		for (const key in TEMPLATES) {
+			this.addCommand({
+				id: `insert-chartsview-template-${key}`,
+				name: `Insert Template - ${key}`,
+				editorCallback: (editor) => {
+					const codeBlock = Buffer.from(TEMPLATES[key as keyof typeof TEMPLATES], "base64").toString("utf8");
+					editor.somethingSelected
+					?
+					editor.replaceSelection(codeBlock)
+					:
+					editor.setLine(
+						editor.getCursor().line,
+						codeBlock
+					);
+				}
+			});
+		}
 	}
 
 	onunload() {
