@@ -28,12 +28,24 @@ Use command `Insert Template - DualAxes` to insert code block.
 
 ![image](https://user-images.githubusercontent.com/150803/119969638-618b5480-bfe1-11eb-8a36-0a5d60408b00.png)
 
-#### MultiView
+#### Mix
 Use `data.<any name>` and `options.<any name>` to set data and options. Keep data and options `<any name>` same.
 
-Use command `Insert Template - MultiView` to insert code block.
+Use command `Insert Template - Mix` to insert code block.
 
 ![image](https://user-images.githubusercontent.com/150803/120421841-a1638a80-c399-11eb-9464-d773931fdd6f.png)
+
+#### Bar
+Use command `Insert Template - Bar` to insert code block.
+
+#### OrganizationTreeGraph
+Use command `Insert Template - OrganizationTreeGraph` to insert code block.
+
+#### Radar
+Use command `Insert Template - Radar` to insert code block.
+
+#### TinyLine
+Use command `Insert Template - TinyLine` to insert code block.
 
 
 ### Manually installing the plugin

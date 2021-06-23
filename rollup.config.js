@@ -2,7 +2,7 @@ import typescript from '@rollup/plugin-typescript';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 
-const isProd = (process.env.BUILD === 'production');
+const isDebug = (process.env.BUILD === 'debug');
 
 const banner =
   `/*
@@ -27,9 +27,9 @@ const config = {
   ]
 };
 
-if (!isProd) {
+if (isDebug) {
   config.output.sourcemap = 'inline';
-  config.output.sourcemapExcludeSources = true;
+  config.output.sourcemapExcludeSources = false;
 }
 
 export default config;

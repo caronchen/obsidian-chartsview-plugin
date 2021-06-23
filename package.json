@@ -1,10 +1,11 @@
 {
   "name": "obsidian-chartsview-plugin",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "This is a charts view plugin for Obsidian (https://obsidian.md)",
   "main": "main.js",
   "scripts": {
     "dev": "rollup --config rollup.config.js -w",
+    "debug": "rollup --config rollup.config.js -w --environment BUILD:debug",
     "build": "rollup --config rollup.config.js --environment BUILD:production"
   },
   "keywords": [],
@@ -23,7 +24,7 @@
     "typescript": "^4.2.4"
   },
   "dependencies": {
-    "@ant-design/charts": "^1.1.4",
+    "@ant-design/charts": "^1.1.17",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   }

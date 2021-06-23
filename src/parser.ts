@@ -2,7 +2,7 @@ import { parseYaml } from "obsidian";
 import Charts from '@ant-design/charts';
 import { ChartProps, DataType } from "./components/Chart";
 
-const functionRegex = /^\s*function\s+[\w\W]+\(.*\)\s*\{.*\}\s*/;
+const functionRegex = /^[\s\n]*function[\s\n]+[\w\W]+\([\w\W]*\)[\s\n]*\{[\w\W]*\}[\s\n]*/g;
 
 interface Options {
     [key: string]: any;
@@ -19,8 +19,7 @@ export function parseConfig(content: string): ChartProps {
     const dataProps = parseYaml(content) as DataProps;
     const type = dataProps["type"];
 
-    // @ts-ignore
-    const chart = Charts[type];
+    const chart = Charts[type as keyof typeof Charts];
     if (chart === undefined) {
         throw new Error(`Unsupported chart type ${type}.`);
     }
