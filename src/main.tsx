@@ -9,8 +9,8 @@ import { MarkdownPostProcessorContext, Plugin } from 'obsidian';
 import { Chart } from './components/Chart';
 import { parseConfig } from './parser';
 import { ChartsViewPluginSettings, ChartsViewSettingTab, DEFAULT_SETTINGS } from './settings';
-import { TEMPLATES } from './templates';
 import { insertEditor } from './tools';
+import { ChartTemplateSuggestModal } from './components/Modal';
 
 const CSV_FILE_EXTENSION = "csv";
 const VIEW_TYPE_CSV = "csv";
@@ -40,18 +40,13 @@ export default class ChartsViewPlugin extends Plugin {
 		this.addSettingTab(new ChartsViewSettingTab(this.app, this));
 		this.registerMarkdownCodeBlockProcessor("chartsview", this.ChartsViewProcessor.bind(this));
 
-		for (const key in TEMPLATES) {
 			this.addCommand({
-				id: `insert-chartsview-template-${key}`,
-				name: `Insert Template - ${key}`,
+			id: 'insert-chartsview-template',
+			name: 'Insert Template ...',
 				editorCallback: (editor) => {
-					insertEditor(
-						editor,
-						Buffer.from(TEMPLATES[key as keyof typeof TEMPLATES], "base64").toString("utf8")
-					);
+				new ChartTemplateSuggestModal(this.app, editor).open();
 				}
 			});
-		}
 
 		try {
 			this.registerExtensions([CSV_FILE_EXTENSION], VIEW_TYPE_CSV);
@@ -65,10 +60,7 @@ export default class ChartsViewPlugin extends Plugin {
 			editorCallback: async (editor) => {
 				const file = await fileDialog({ accept: '.csv', strict: true });
 				const content = await file.text();
-				const records = parse(content, {
-					columns: true,
-					skip_empty_lines: true,
-				});
+				const records = parse(content, { columns: true, skip_empty_lines: true });
 
 				insertEditor(
 					editor,
