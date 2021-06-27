@@ -3,11 +3,9 @@ import { ChartTemplateType } from '../templates';
 import { insertEditor } from '../tools';
 
 export class ChartTemplateSuggestModal extends FuzzySuggestModal<ChartTemplateType> {
-    app: App;
 
     constructor(app: App, private editor: Editor) {
         super(app);
-        this.app = app;
     }
 
     getItems(): ChartTemplateType[] {
