@@ -3,13 +3,12 @@ import yaml from 'js-yaml';
 
 import React from 'react';
 import ReactDOM from "react-dom";
-import parse from 'csv-parse/lib/sync';
 
 import { MarkdownPostProcessorContext, Plugin } from 'obsidian';
 import { Chart } from './components/Chart';
 import { parseConfig } from './parser';
 import { ChartsViewPluginSettings, ChartsViewSettingTab, DEFAULT_SETTINGS } from './settings';
-import { insertEditor } from './tools';
+import { insertEditor, parseCsv } from './tools';
 import { ChartTemplateSuggestModal } from './components/Modal';
 
 const CSV_FILE_EXTENSION = "csv";
@@ -21,7 +20,7 @@ export default class ChartsViewPlugin extends Plugin {
 	async ChartsViewProcessor(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) {
 		ReactDOM.unmountComponentAtNode(el);
 		try {
-			const chartProps = parseConfig(source);
+			const chartProps = await parseConfig(source, this);
 			chartProps.config["theme"] = chartProps.config["theme"] || this.settings.theme;
 			ReactDOM.render(
 				<Chart {...chartProps} />,
@@ -40,13 +39,13 @@ export default class ChartsViewPlugin extends Plugin {
 		this.addSettingTab(new ChartsViewSettingTab(this.app, this));
 		this.registerMarkdownCodeBlockProcessor("chartsview", this.ChartsViewProcessor.bind(this));
 
-			this.addCommand({
+		this.addCommand({
 			id: 'insert-chartsview-template',
 			name: 'Insert Template ...',
-				editorCallback: (editor) => {
+			editorCallback: (editor) => {
 				new ChartTemplateSuggestModal(this.app, editor).open();
-				}
-			});
+			}
+		});
 
 		try {
 			this.registerExtensions([CSV_FILE_EXTENSION], VIEW_TYPE_CSV);
@@ -60,7 +59,7 @@ export default class ChartsViewPlugin extends Plugin {
 			editorCallback: async (editor) => {
 				const file = await fileDialog({ accept: '.csv', strict: true });
 				const content = await file.text();
-				const records = parse(content, { columns: true, skip_empty_lines: true });
+				const records = parseCsv(content);
 
 				insertEditor(
 					editor,
@@ -78,7 +77,7 @@ export default class ChartsViewPlugin extends Plugin {
 	}
 
 	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+		this.settings = Object.assign(DEFAULT_SETTINGS, await this.loadData());
 	}
 
 	async saveSettings() {

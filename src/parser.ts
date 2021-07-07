@@ -1,8 +1,13 @@
-import { parseYaml } from "obsidian";
+import { parseYaml, TFile } from "obsidian";
 import Charts from '@ant-design/charts';
 import { ChartProps, DataType } from "./components/Chart";
+import ChartsViewPlugin from "./main";
+import path from "path";
+import { parseCsv } from "./tools";
 
 const functionRegex = /^[\s\n]*function[\s\n]+[\w\W]+\([\w\W]*\)[\s\n]*\{[\w\W]*\}[\s\n]*/g;
+
+type DataOptionType = DataType | Options | string;
 
 interface Options {
     [key: string]: any;
@@ -12,10 +17,10 @@ interface DataProps {
     type: string;
     options?: Options;
     data?: DataType;
-    [key: string]: DataType | string;
+    [key: string]: DataOptionType;
 }
 
-export function parseConfig(content: string): ChartProps {
+export async function parseConfig(content: string, plugin: ChartsViewPlugin): Promise<ChartProps> {
     const dataProps = parseYaml(content) as DataProps;
     const type = dataProps["type"];
 
@@ -31,7 +36,7 @@ export function parseConfig(content: string): ChartProps {
     if (type == "MultiView" || type == "Mix") {
         return {
             type,
-            config: parseMultiViewConfig(dataProps, data, options)
+            config: await parseMultiViewConfig(dataProps, data, options, plugin)
         };
     } else {
         return {
@@ -57,7 +62,7 @@ function stringToFunction(options: Options): object {
     return options;
 }
 
-function parseMultiViewConfig(dataProps: DataProps, data: DataType, options: Options): {} {
+async function parseMultiViewConfig(dataProps: DataProps, data: DataType, options: Options, plugin: ChartsViewPlugin): Promise<{}> {
     const temp = new Map<string, any>();
     const views: {}[] = [];
 
@@ -68,14 +73,27 @@ function parseMultiViewConfig(dataProps: DataProps, data: DataType, options: Opt
             continue;
         }
 
-        const view = temp.get(keyParts[1]) || {};
+        const viewType = keyParts[1]; 
+        const view = temp.get(viewType) || {};
         view[keyParts[0]] = dataProps[key];
-        temp.set(keyParts[1], view);
+        temp.set(viewType, view);
     }
 
-    temp.forEach(function (v) {
-        views.push({ data: v["data"] || data, ...v["options"] });
-    });
+    for (let v of temp.values()) {
+        views.push({ data: await loadFromFile(v["data"], plugin) || data, ...v["options"] });
+    }
 
     return { views, ...options };
+}
+
+async function loadFromFile(data: DataOptionType, plugin: ChartsViewPlugin): Promise<DataType> {
+    if (typeof data === "string") {
+        const file = plugin.app.vault.getAbstractFileByPath(plugin.settings.dataPath + path.sep + data);
+        if (file instanceof TFile) {
+            return parseCsv(await plugin.app.vault.read(file));
+        }
+        return {};
+    } else {
+        return data;
+    }
 }

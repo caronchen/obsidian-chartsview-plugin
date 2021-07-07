@@ -1,22 +1,24 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
+import path from 'path';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ChartsViewPlugin from "./main";
+import { getFolderOptions } from './tools';
 
 export interface ChartsViewPluginSettings {
+	dataPath: string;
 	theme: string;
 }
 
 export const DEFAULT_SETTINGS: ChartsViewPluginSettings = {
-	theme: 'default'
+	theme: 'default',
+	dataPath: path.sep
 }
 
 export class ChartsViewSettingTab extends PluginSettingTab {
-	plugin: ChartsViewPlugin;
 
-	constructor(app: App, plugin: ChartsViewPlugin) {
+	constructor(app: App, private plugin: ChartsViewPlugin) {
 		super(app, plugin);
-		this.plugin = plugin;
 	}
 
 	display(): void {
@@ -35,6 +37,17 @@ export class ChartsViewSettingTab extends PluginSettingTab {
 				.setValue(this.plugin.settings.theme)
 				.onChange(async (value) => {
 					this.plugin.settings.theme = value;
+					await this.plugin.saveSettings();
+				}));
+
+		new Setting(containerEl)
+			.setName("Data Folder")
+			.setDesc("Choose default folder for loading chart datas.")
+			.addDropdown(dropdown => dropdown
+				.addOptions(getFolderOptions(this.app))
+				.setValue(this.plugin.settings.dataPath)
+				.onChange(async (value) => {
+					this.plugin.settings.dataPath = value;
 					await this.plugin.saveSettings();
 				}));
 
