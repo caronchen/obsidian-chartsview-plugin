@@ -41,7 +41,7 @@ export async function parseConfig(content: string, plugin: ChartsViewPlugin): Pr
     } else {
         return {
             type,
-            config: { data, ...options }
+            config: { data: await loadFromFile(data, plugin), ...options }
         };
     }
 }
