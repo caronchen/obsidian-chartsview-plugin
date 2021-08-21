@@ -88,11 +88,23 @@ async function parseMultiViewConfig(dataProps: DataProps, data: DataType, option
 
 async function loadFromFile(data: DataOptionType, plugin: ChartsViewPlugin): Promise<DataType> {
     if (typeof data === "string") {
-        const file = plugin.app.vault.getAbstractFileByPath(plugin.settings.dataPath + path.sep + data);
-        if (file instanceof TFile) {
-            return parseCsv(await plugin.app.vault.read(file));
+        const csvFileNames = data.split(",");
+        const value = [];
+        for (let name of csvFileNames.values()) {
+            const file = plugin.app.vault.getAbstractFileByPath(plugin.settings.dataPath + path.sep + name.trim());
+            if (file instanceof TFile) {
+                value.push(parseCsv(await plugin.app.vault.read(file)));
+            } else {
+                value.push({});
+            }
         }
-        return {};
+        if (value.length == 0) {
+            return {};
+        } 
+        if (value.length == 1) {
+            return value[0];
+        }
+        return value;
     } else {
         return data;
     }

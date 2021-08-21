@@ -95,6 +95,40 @@ options.line:
           fillOpacity: 1
 ```
 
+**Multi csv file support:**
+
+```chartsview
+#-----------------#
+#- chart type    -#
+#-----------------#
+type: DualAxes
+
+#-----------------#
+#- chart data    -#
+#-----------------#
+data: DualAxesData.csv, DualAxesData.csv
+
+#-----------------#
+#- chart options -#
+#-----------------#
+options:
+  xField: 'time'
+  yField: ['value', 'count']
+  yAxis:
+    value:
+      min: 0
+      label:
+        formatter:
+          function formatter(val) {
+            return ''.concat(val, '个');
+          }
+  geometryOptions:
+    - geometry: 'column'
+    - geometry: 'line'
+      lineStyle:
+	    lineWidth: 2
+```
+
 #### Pie
 Use command `Insert Template` -> `Pie` to insert code block.
 
