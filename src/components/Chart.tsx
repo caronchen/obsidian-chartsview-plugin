@@ -1,5 +1,6 @@
 import React from "react";
-import Charts from "@ant-design/charts";
+import Charts, { Options, Plot } from "@ant-design/charts";
+import { LooseObject } from "@antv/g2/lib/interface";
 
 export interface ChartProps {
   type: string;
@@ -8,9 +9,11 @@ export interface ChartProps {
 
 export type DataType = object[] | object;
 
-interface ConfigProps {
+export interface ConfigProps {
   data?: DataType;
-  theme?: string | object;
+  theme?: LooseObject;
+  backgroundColor?: string;
+	padding?: number[];
 }
 
 Charts.G2.registerTheme("theme1", {
@@ -27,6 +30,10 @@ export const Chart = ({ type, config }: ChartProps) => {
   // @ts-ignore
   const Component = Charts[type];
   return (
-    <Component {...config} />
+    <Component {...config} onReady={(chart: Plot<Options>) => {
+      if (chart instanceof Plot && config.theme && config.backgroundColor) {
+        chart.update({ theme: { background: config.backgroundColor }, padding: config.padding });
+      }
+    }} />
   );
 }

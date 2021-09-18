@@ -1,4 +1,4 @@
-import parse from 'csv-parse/lib/sync';
+import Papa  from "papaparse";
 import { App, TFolder, Vault, Editor } from "obsidian";
 
 export function insertEditor(editor: Editor, data: string): void {
@@ -25,9 +25,10 @@ export function getFolderOptions(app: App) {
 }
 
 export function parseCsv(content: string): any {
-    return parse(content, {
-        columns: true,
-        skip_empty_lines: true,
-        cast: true
-    });
+    return Papa.parse(content, {
+        header: true,
+        skipEmptyLines: true,
+        comments: false,
+        dynamicTyping: true,
+    }).data;
 }

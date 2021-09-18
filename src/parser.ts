@@ -2,7 +2,6 @@ import { parseYaml, TFile } from "obsidian";
 import Charts from '@ant-design/charts';
 import { ChartProps, DataType } from "./components/Chart";
 import ChartsViewPlugin from "./main";
-import path from "path";
 import { parseCsv } from "./tools";
 
 const functionRegex = /^[\s\n]*function[\s\n]+[\w\W]+\([\w\W]*\)[\s\n]*\{[\w\W]*\}[\s\n]*/g;
@@ -28,7 +27,6 @@ export async function parseConfig(content: string, plugin: ChartsViewPlugin): Pr
     if (chart === undefined) {
         throw new Error(`Unsupported chart type ${type}.`);
     }
-
 
     const data: DataType = dataProps["data"];
     const options = stringToFunction(dataProps["options"] || {});
@@ -91,7 +89,7 @@ async function loadFromFile(data: DataOptionType, plugin: ChartsViewPlugin): Pro
         const csvFileNames = data.split(",");
         const value = [];
         for (let name of csvFileNames.values()) {
-            const file = plugin.app.vault.getAbstractFileByPath(plugin.settings.dataPath + path.sep + name.trim());
+            const file = plugin.app.vault.getAbstractFileByPath(plugin.settings.dataPath + "/" + name.trim());
             if (file instanceof TFile) {
                 value.push(parseCsv(await plugin.app.vault.read(file)));
             } else {

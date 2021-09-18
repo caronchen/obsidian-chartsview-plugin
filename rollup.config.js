@@ -21,8 +21,10 @@ const config = {
   },
   external: ['obsidian'],
   plugins: [
+    nodeResolve({
+      browser: true
+    }),
     typescript(),
-    nodeResolve({ browser: true }),
     commonjs(),
   ]
 };

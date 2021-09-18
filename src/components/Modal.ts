@@ -1,6 +1,7 @@
 import { App, Editor, FuzzySuggestModal } from 'obsidian';
 import { ChartTemplateType } from '../templates';
 import { insertEditor } from '../tools';
+import { Buffer } from 'buffer/';
 
 export class ChartTemplateSuggestModal extends FuzzySuggestModal<ChartTemplateType> {
 
