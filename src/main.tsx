@@ -24,9 +24,11 @@ export default class ChartsViewPlugin extends Plugin {
 			const chartProps = await parseConfig(source, this);
 			const cfg = chartProps.config;
 			const isBackgroundColorCustomed = cfg.theme && (cfg.theme.background || (cfg.theme.styleSheet && cfg.theme.styleSheet.backgroundColor));
+			const isPaddingCustomed = cfg.padding;
 			cfg.theme = cfg.theme || G2.getTheme(this.settings.theme);
 			cfg.backgroundColor = isBackgroundColorCustomed ? undefined : this.settings.backgroundColor;
-			cfg.padding = [this.settings.paddingTop, this.settings.paddingRight, this.settings.paddingBottom, this.settings.paddingLeft];
+			cfg.padding = isPaddingCustomed ? undefined : [this.settings.paddingTop, this.settings.paddingRight,
+				this.settings.paddingBottom, this.settings.paddingLeft];
 			ReactDOM.render(
 				<Chart {...chartProps} />,
 				el

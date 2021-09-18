@@ -31,8 +31,15 @@ export const Chart = ({ type, config }: ChartProps) => {
   const Component = Charts[type];
   return (
     <Component {...config} onReady={(chart: Plot<Options>) => {
-      if (chart instanceof Plot && config.theme && config.backgroundColor) {
-        chart.update({ theme: { background: config.backgroundColor }, padding: config.padding });
+      if (chart instanceof Plot) {
+        const custom = {} as LooseObject;
+        if (config.theme && config.backgroundColor) {
+          custom.theme = { background: config.backgroundColor };
+        }
+        if (config.padding) {
+          custom.padding = config.padding;
+        }
+        chart.update(custom);
       }
     }} />
   );
