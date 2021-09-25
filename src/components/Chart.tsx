@@ -30,7 +30,8 @@ export const Chart = ({ type, config }: ChartProps) => {
   // @ts-ignore
   const Component = Charts[type];
   return (
-    <Component {...config} onReady={(chart: Plot<Options>) => {
+    // @ts-ignore
+    <Component {...config} onReady={(chart) => {
       if (chart instanceof Plot) {
         const custom = {} as LooseObject;
         if (config.theme && config.backgroundColor) {
@@ -39,7 +40,13 @@ export const Chart = ({ type, config }: ChartProps) => {
         if (config.padding) {
           custom.padding = config.padding;
         }
-        chart.update(custom);
+        if (custom.theme || config.padding) {
+          try {
+            chart.update(custom);
+          } catch (e) {
+            console.error(e);
+          }
+        }
       }
     }} />
   );
