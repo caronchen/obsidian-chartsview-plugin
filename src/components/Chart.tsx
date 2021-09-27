@@ -44,11 +44,7 @@ export const Chart = ({ type, config }: ChartProps) => {
               custom.padding = config.padding;
             }
             if (custom.theme || config.padding) {
-              try {
-                chart.update(custom);
-              } catch (e) {
-                console.error(e);
-              }
+              chart.update(custom);
             }
           }
         }
