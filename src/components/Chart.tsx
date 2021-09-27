@@ -1,5 +1,6 @@
 import React from "react";
-import Charts, { Options, Plot } from "@ant-design/charts";
+import Charts, { Plot } from "@ant-design/charts";
+import ErrorBoundary from "@ant-design/charts/lib/errorBoundary";
 import { LooseObject } from "@antv/g2/lib/interface";
 
 export interface ChartProps {
@@ -30,24 +31,29 @@ export const Chart = ({ type, config }: ChartProps) => {
   // @ts-ignore
   const Component = Charts[type];
   return (
-    // @ts-ignore
-    <Component {...config} onReady={(chart) => {
-      if (chart instanceof Plot) {
-        const custom = {} as LooseObject;
-        if (config.theme && config.backgroundColor) {
-          custom.theme = { background: config.backgroundColor };
-        }
-        if (config.padding) {
-          custom.padding = config.padding;
-        }
-        if (custom.theme || config.padding) {
-          try {
-            chart.update(custom);
-          } catch (e) {
-            console.error(e);
+    <ErrorBoundary>
+      <Component {...config} onReady={
+        // @ts-ignore
+        (chart) => {
+          if (chart instanceof Plot) {
+            const custom = {} as LooseObject;
+            if (config.theme && config.backgroundColor) {
+              custom.theme = { background: config.backgroundColor };
+            }
+            if (config.padding) {
+              custom.padding = config.padding;
+            }
+            if (custom.theme || config.padding) {
+              try {
+                chart.update(custom);
+              } catch (e) {
+                console.error(e);
+              }
+            }
           }
         }
       }
-    }} />
+    />
+    </ErrorBoundary>
   );
 }
