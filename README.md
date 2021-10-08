@@ -131,6 +131,8 @@ options:
 
 #### Word Count
 Use command `Insert Template...` -> `Word Count` to insert code block.
+![image](https://user-images.githubusercontent.com/150803/136478725-be28a56b-0075-4f0a-a719-f61b30e83b6a.png)
+
 
 #### Pie
 Use command `Insert Template` -> `Pie` to insert code block.
