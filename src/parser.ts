@@ -2,7 +2,7 @@ import { parseYaml, TFile } from "obsidian";
 import Charts from '@ant-design/charts';
 import { ChartProps, DataType } from "./components/Chart";
 import ChartsViewPlugin from "./main";
-import { parseCsv } from "./tools";
+import { getWordCount, parseCsv } from "./tools";
 
 const functionRegex = /^[\s\n]*function[\s\n]+[\w\W]+\([\w\W]*\)[\s\n]*\{[\w\W]*\}[\s\n]*/g;
 
@@ -86,24 +86,42 @@ async function parseMultiViewConfig(dataProps: DataProps, data: DataType, option
 
 async function loadFromFile(data: DataOptionType, plugin: ChartsViewPlugin): Promise<DataType> {
     if (typeof data === "string") {
-        const csvFileNames = data.split(",");
-        const value = [];
-        for (let name of csvFileNames.values()) {
-            const file = plugin.app.vault.getAbstractFileByPath(plugin.settings.dataPath + "/" + name.trim());
-            if (file instanceof TFile) {
-                value.push(parseCsv(await plugin.app.vault.read(file)));
-            } else {
-                value.push({});
-            }
+        if (data.startsWith("wordcount:")) {
+            return loadFromMdWordCount(data.replace("wordcount:", ""), plugin);
+        } else {
+            return loadFromCsv(data, plugin);
         }
-        if (value.length == 0) {
-            return {};
-        } 
-        if (value.length == 1) {
-            return value[0];
-        }
-        return value;
     } else {
         return data;
     }
+}
+
+async function loadFromMdWordCount(fileName: string, plugin: ChartsViewPlugin): Promise<DataType> {
+    for (const file of plugin.app.vault.getMarkdownFiles()) {
+        if (file.basename == fileName) {
+            const content = await plugin.app.vault.cachedRead(file);
+            return getWordCount(content, plugin.settings.wordCountFilter);
+        }
+    }
+    throw new Error(`Note not found.`);
+}
+
+async function loadFromCsv(data: string, plugin: ChartsViewPlugin): Promise<DataType> {
+    const csvFileNames = data.split(",");
+    const value = [];
+    for (let name of csvFileNames.values()) {
+        const file = plugin.app.vault.getAbstractFileByPath(plugin.settings.dataPath + "/" + name.trim());
+        if (file instanceof TFile) {
+            value.push(parseCsv(await plugin.app.vault.read(file)));
+        } else {
+            value.push({});
+        }
+    }
+    if (value.length == 0) {
+        return {};
+    } 
+    if (value.length == 1) {
+        return value[0];
+    }
+    return value;
 }

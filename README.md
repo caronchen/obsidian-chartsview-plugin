@@ -129,6 +129,9 @@ options:
 	    lineWidth: 2
 ```
 
+#### Word Count
+Use command `Insert Template...` -> `Word Count` to insert code block.
+
 #### Pie
 Use command `Insert Template` -> `Pie` to insert code block.
 

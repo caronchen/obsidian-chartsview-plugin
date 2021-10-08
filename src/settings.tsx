@@ -12,6 +12,7 @@ export interface ChartsViewPluginSettings {
 	paddingRight: number;
 	paddingBottom: number;
 	paddingLeft: number;
+	wordCountFilter: string;
 }
 
 export const DEFAULT_SETTINGS: ChartsViewPluginSettings = {
@@ -21,7 +22,44 @@ export const DEFAULT_SETTINGS: ChartsViewPluginSettings = {
 	paddingTop: 30,
 	paddingRight: 30,
 	paddingBottom: 30,
-	paddingLeft: 30
+	paddingLeft: 30,
+	wordCountFilter: `[A-z]{1,2}
+[0-9]+
+(?=[MDCLXVI])M*(C[MD]|D?C*)(X[CL]|L?X*)(I[XV]|V?I*)
+and
+are
+but
+did
+for
+get
+got
+had
+has
+her
+him
+his
+its
+not
+our
+she
+the
+was
+you
+been
+from
+have
+into
+mine
+ours
+that
+them
+they
+this
+went
+were
+with
+these
+those`
 }
 
 export class ChartsViewSettingTab extends PluginSettingTab {
@@ -114,6 +152,19 @@ export class ChartsViewSettingTab extends PluginSettingTab {
 					this.plugin.settings.dataPath = value;
 					await this.plugin.saveSettings();
 				}));
+
+		new Setting(containerEl)
+			.setName("Word Filter")
+			.setDesc("For word count, any words in the list will be ignored.")
+			.addTextArea(text => {
+				text.inputEl.rows = 6;
+				text
+					.setValue(this.plugin.settings.wordCountFilter)
+					.onChange(async (value) => {
+						this.plugin.settings.wordCountFilter = value;
+						await this.plugin.saveSettings();
+					});
+			});
 
 		if (Platform.isDesktopApp) {
 			ReactDOM.render(
