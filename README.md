@@ -131,6 +131,29 @@ options:
 
 #### Word Count
 Use command `Insert Template...` -> `Word Count` to insert code block.
+```chartsview
+#-----------------#
+#- chart type    -#
+#-----------------#
+type: WordCloud
+
+#-----------------#
+#- chart data    -#
+#-----------------#
+data: "wordcount:Words"
+
+#-----------------#
+#- chart options -#
+#-----------------#
+options:
+  wordField: "word"
+  weightField: "count"
+  colorField: "count"
+  wordStyle:
+    rotation: 30
+```
+![image](https://user-images.githubusercontent.com/150803/136478725-be28a56b-0075-4f0a-a719-f61b30e83b6a.png)
+
 
 #### Pie
 Use command `Insert Template` -> `Pie` to insert code block.
