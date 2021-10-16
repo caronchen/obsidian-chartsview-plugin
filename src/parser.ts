@@ -4,7 +4,7 @@ import { ChartProps, DataType } from "./components/Chart";
 import ChartsViewPlugin from "./main";
 import { getWordCount, parseCsv } from "./tools";
 
-const functionRegex = /^[\s\n]*function[\s\n]+[\w\W]+\([\w\W]*\)[\s\n]*\{[\w\W]*\}[\s\n]*/g;
+const functionRegex = /^[\s\n]*function[\s\n]+[\w\W]*\([\w\W]*\)[\s\n]*\{[\w\W]*\}[\s\n]*/i;
 
 type DataOptionType = DataType | Options | string;
 
@@ -51,9 +51,9 @@ function stringToFunction(options: Options): object {
             if (typeof value === "string" && functionRegex.test(value)) {
                 options[key] = eval(`(${value})`);
             } else if (Array.isArray(value)) {
-                value.forEach(stringToFunction);
+                options[key] = value.map(stringToFunction);
             } else if (typeof value === "object") {
-                stringToFunction(value);
+                options[key] = stringToFunction(value);
             }
         }
     }
