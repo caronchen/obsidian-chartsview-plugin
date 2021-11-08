@@ -212,6 +212,7 @@ Use command `Insert Template...` -> `TinyLine` to insert code block.
 ### Dataview Plugin Integration
 Chart data by dataviewjs.
 Use command `Insert Template...` -> `Dataviewjs Example (Column)` to insert code block.
+![image](https://user-images.githubusercontent.com/150803/140684190-fa6a08ea-3394-44fe-ae92-265810f6b9a9.png)
 
 #### Allowed methods
 * dv.current()
