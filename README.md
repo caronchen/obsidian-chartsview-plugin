@@ -4,9 +4,9 @@
 
 This is a charts view plugin for Obsidian (https://obsidian.md), based on [Ant Design Charts](https://charts.ant.design/) which is a React chart library.
 
-### How to use
+### Data from CSV file
 
-#### Import data from external CSV file
+#### Import data from external CSV file (Desktop)
 Use command `Import data from external CSV file` to insert data from CSV file.
 
 #### Load data from internal CSV file
@@ -129,6 +129,7 @@ options:
 	    lineWidth: 2
 ```
 
+### Chart Templates
 #### Word Count
 Use command `Insert Template...` -> `Word Count` to insert code block.
 ```chartsview
@@ -207,6 +208,22 @@ Use command `Insert Template...` -> `TinyLine` to insert code block.
 ### Manually installing the plugin
 
 - Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/obsidian-chartsview-plugin/`.
+
+### Dataview Plugin Integration
+Chart data by dataviewjs.
+Use command `Insert Template...` -> `Dataviewjs Example (Column)` to insert code block.
+
+#### Allowed methods
+* dv.current()
+* dv.pages(source)
+* dv.pagePaths(source)
+* dv.page(path)
+* dv.array(value)
+* dv.isArray(value)
+* dv.date(text)
+* dv.fileLink(path, [embed?], [display-name])
+
+See [Dataview Codeblock Reference](https://blacksmithgu.github.io/obsidian-dataview/api/code-reference/)
 
 ### Ant Design Charts Demos
 

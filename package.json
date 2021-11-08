@@ -1,6 +1,6 @@
 {
   "name": "obsidian-chartsview-plugin",
-  "version": "1.0.12",
+  "version": "1.1.0",
   "description": "This is a charts view plugin for Obsidian (https://obsidian.md)",
   "main": "main.js",
   "scripts": {
@@ -21,6 +21,7 @@
     "@types/react": "^17.0.20",
     "@types/react-dom": "^17.0.9",
     "obsidian": "^0.12.11",
+    "obsidian-dataview": "^0.4.20",
     "rollup": "^2.56.3",
     "tslib": "^2.3.1",
     "typescript": "^4.4.3"

@@ -21,7 +21,7 @@ export default class ChartsViewPlugin extends Plugin {
 	async ChartsViewProcessor(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) {
 		ReactDOM.unmountComponentAtNode(el);
 		try {
-			const chartProps = await parseConfig(source, this);
+			const chartProps = await parseConfig(source, this, ctx.sourcePath);
 			const cfg = chartProps.config;
 			const isBackgroundColorCustomed = cfg.theme && (cfg.theme.background || (cfg.theme.styleSheet && cfg.theme.styleSheet.backgroundColor));
 			const isPaddingCustomed = cfg.padding;

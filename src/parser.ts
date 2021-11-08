@@ -3,6 +3,7 @@ import Charts from '@ant-design/charts';
 import { ChartProps, DataType } from "./components/Chart";
 import ChartsViewPlugin from "./main";
 import { getWordCount, parseCsv } from "./tools";
+import { DataviewApi, DataObject, Link, DateTime } from "obsidian-dataview";
 
 const functionRegex = /^[\s\n]*function[\s\n]+[\w\W]*\([\w\W]*\)[\s\n]*\{[\w\W]*\}[\s\n]*/i;
 
@@ -19,7 +20,7 @@ interface DataProps {
     [key: string]: DataOptionType;
 }
 
-export async function parseConfig(content: string, plugin: ChartsViewPlugin): Promise<ChartProps> {
+export async function parseConfig(content: string, plugin: ChartsViewPlugin, sourcePath: string): Promise<ChartProps> {
     const dataProps = parseYaml(content) as DataProps;
     const type = dataProps["type"];
 
@@ -34,12 +35,12 @@ export async function parseConfig(content: string, plugin: ChartsViewPlugin): Pr
     if (type == "MultiView" || type == "Mix") {
         return {
             type,
-            config: await parseMultiViewConfig(dataProps, data, options, plugin)
+            config: await parseMultiViewConfig(dataProps, data, options, plugin, sourcePath)
         };
     } else {
         return {
             type,
-            config: { data: await loadFromFile(data, plugin), ...options }
+            config: { data: await loadFromFile(data, plugin, sourcePath), ...options }
         };
     }
 }
@@ -60,7 +61,7 @@ function stringToFunction(options: Options): object {
     return options;
 }
 
-async function parseMultiViewConfig(dataProps: DataProps, data: DataType, options: Options, plugin: ChartsViewPlugin): Promise<{}> {
+async function parseMultiViewConfig(dataProps: DataProps, data: DataType, options: Options, plugin: ChartsViewPlugin, sourcePath: string): Promise<{}> {
     const temp = new Map<string, any>();
     const views: {}[] = [];
 
@@ -78,21 +79,66 @@ async function parseMultiViewConfig(dataProps: DataProps, data: DataType, option
     }
 
     for (let v of temp.values()) {
-        views.push({ data: await loadFromFile(v["data"], plugin) || data, ...v["options"] });
+        views.push({ data: await loadFromFile(v["data"], plugin, sourcePath) || data, ...v["options"] });
     }
 
     return { views, ...options };
 }
 
-async function loadFromFile(data: DataOptionType, plugin: ChartsViewPlugin): Promise<DataType> {
+async function loadFromFile(data: DataOptionType, plugin: ChartsViewPlugin, sourcePath: string): Promise<DataType> {
     if (typeof data === "string") {
         if (data.startsWith("wordcount:")) {
             return loadFromMdWordCount(data.replace("wordcount:", ""), plugin);
+        } else if (data.startsWith("dataviewjs:")) {
+            return loadFromDataViewPlugin(data.replace("dataviewjs:", ""), plugin, sourcePath);
         } else {
             return loadFromCsv(data, plugin);
         }
     } else {
         return data;
+    }
+}
+
+const dataViewApiProxy = function (api: DataviewApi, currentFilePath: string) {
+    return {
+        pagePaths: function (query?: string): any {
+            return api.pagePaths(query, currentFilePath);
+        },
+        page: function (path: string | Link): DataObject | undefined {
+            return api.page(path, currentFilePath);
+        },
+        pages: function (query?: string): any {
+            return api.pages(query, currentFilePath);
+        },
+        current: function (): Record<string, any> | undefined {
+            return api.page(currentFilePath, currentFilePath);
+        },
+        array: function (raw: any): any {
+            return api.array(raw);
+        },
+        isArray: function (raw: any): raw is any | Array<any> {
+            return api.isArray(raw);
+        },
+        fileLink: function (path: string, embed: boolean = false, display?: string) {
+            // @ts-ignore
+            return Link.file(path, embed, display);
+        },
+        date: function (pathlike: string | Link | DateTime): DateTime | null {
+            return api.date(pathlike);
+        }
+    }
+};
+
+async function loadFromDataViewPlugin(content: string, plugin: ChartsViewPlugin, sourcePath: string): Promise<DataType> {
+    if (plugin.app.plugins.enabledPlugins.has("dataview")) {
+        const api: DataviewApi = plugin.app.plugins.plugins.dataview?.api;
+        if (api) {
+            return new Function("dv", content).call(undefined, dataViewApiProxy(api, sourcePath));
+        } else {
+            throw new Error(`Obsidian Dataview is not ready.`);
+        }
+    } else {
+        throw new Error(`Obsidian Dataview is required.`);
     }
 }
 
