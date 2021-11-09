@@ -212,7 +212,59 @@ Use command `Insert Template...` -> `TinyLine` to insert code block.
 ### Dataview Plugin Integration
 Chart data by dataviewjs.
 Use command `Insert Template...` -> `Dataviewjs Example (Column)` to insert code block.
+
+```
+#-----------------#
+#- chart data    -#
+#-----------------#
+data: |
+  dataviewjs:
+  return dv.pages()
+           .groupBy(p => p.file.folder)
+		   .map(p => ({folder: p.key || "ROOT", count: p.rows.length}))
+		   .array();
+```
 ![image](https://user-images.githubusercontent.com/150803/140684190-fa6a08ea-3394-44fe-ae92-265810f6b9a9.png)
+
+```
+#-----------------#
+#- chart data    -#
+#-----------------#
+data: |
+  dataviewjs:
+  return dv.pages()
+           .groupBy(p => p.file.ctime.hour >= 8 && p.file.ctime.hour <= 18 ? 'Day' : 'Night')
+		   .map(p => ({cdate: p.key, count: p.rows.length}))
+		   .array();
+```
+![image](https://user-images.githubusercontent.com/150803/140925371-7d645640-db9b-4e43-8828-24b084f298db.png)
+
+```
+#-----------------#
+#- chart data    -#
+#-----------------#
+data: |
+  dataviewjs:
+  return dv.pages()
+           .groupBy(p => p.file.ctime.toFormat("HH"))
+		   .map(p => ({cdate: p.key, count: p.rows.length}))
+		   .array();
+```
+![image](https://user-images.githubusercontent.com/150803/140925719-a7a1e1c9-c682-4e9b-a491-e103537052de.png)
+
+```
+#-----------------#
+#- chart data    -#
+#-----------------#
+data: |
+  dataviewjs:
+  return dv.pages()
+           .groupBy(p => p.file.cday.toFormat("yyyy/MM"))
+		   .map(p => ({cdate: p.key, count: p.rows.length}))
+		   .array();
+```
+![image](https://user-images.githubusercontent.com/150803/140925781-6d601a13-db73-454b-96af-d3def8cc00e1.png)
+
 
 #### Allowed methods
 * dv.current()
