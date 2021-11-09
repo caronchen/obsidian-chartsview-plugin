@@ -16,6 +16,8 @@
     - [Radar](#radar)
     - [TinyLine](#tinyline)
   - [Dataview Plugin Integration](#dataview-plugin-integration)
+    - [Template](#template)
+    - [Examples](#examples)
     - [Allowed methods](#allowed-methods)
   - [Manually installing the plugin](#manually-installing-the-plugin)
   - [Ant Design Charts Demos](#ant-design-charts-demos)
@@ -227,9 +229,11 @@ Use command `Insert Template...` -> `TinyLine` to insert code block.
 ![image](https://user-images.githubusercontent.com/150803/123117476-5a3a5800-d474-11eb-9db8-4b3785bb010c.png)
 
 ### Dataview Plugin Integration
+#### Template
 Chart data by dataviewjs.
 Use command `Insert Template...` -> `Dataviewjs Example (Column)` to insert code block.
 
+#### Examples
 ```
 #-----------------#
 #- chart data    -#
