@@ -4,6 +4,7 @@
   - [Data from CSV file](#data-from-csv-file)
     - [Import data from external CSV file (Desktop)](#import-data-from-external-csv-file-desktop)
     - [Load data from internal CSV file](#load-data-from-internal-csv-file)
+      - [Multi CSV files](#multi-csv-files)
   - [Chart Templates](#chart-templates)
     - [Word Count](#word-count)
     - [Pie](#pie)
@@ -118,7 +119,7 @@ options.line:
           fillOpacity: 1
 ```
 
-**Multi csv file support:**
+##### Multi CSV files
 
 ```chartsview
 #-----------------#
