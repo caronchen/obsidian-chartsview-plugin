@@ -12,12 +12,12 @@
     - [OrganizationTreeGraph](#organizationtreegraph)
     - [Radar](#radar)
     - [TinyLine](#tinyline)
+    - [Dataviewjs Example (Column)](#dataviewjs-example-column)
   - [Data from CSV file](#data-from-csv-file)
     - [Import data from external CSV file (Desktop)](#import-data-from-external-csv-file-desktop)
     - [Load data from internal CSV file](#load-data-from-internal-csv-file)
       - [Multi CSV files](#multi-csv-files)
   - [Dataview Plugin Integration](#dataview-plugin-integration)
-    - [Template](#template)
     - [Examples](#examples)
     - [Allowed methods](#allowed-methods)
   - [Manually installing the plugin](#manually-installing-the-plugin)
@@ -103,6 +103,12 @@ Use command `Insert Template...` -> `Radar` to insert code block.
 Use command `Insert Template...` -> `TinyLine` to insert code block.
 
 ![image](https://user-images.githubusercontent.com/150803/123117476-5a3a5800-d474-11eb-9db8-4b3785bb010c.png)
+
+#### Dataviewjs Example (Column)
+Chart data by dataviewjs.
+Use command `Insert Template...` -> `Dataviewjs Example (Column)` to insert code block.
+
+![image](https://user-images.githubusercontent.com/150803/140684190-fa6a08ea-3394-44fe-ae92-265810f6b9a9.png)
 
 ### Data from CSV file
 
@@ -230,9 +236,6 @@ options:
 ```
 
 ### Dataview Plugin Integration
-#### Template
-Chart data by dataviewjs.
-Use command `Insert Template...` -> `Dataviewjs Example (Column)` to insert code block.
 
 #### Examples
 ```
