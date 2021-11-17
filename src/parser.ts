@@ -5,7 +5,7 @@ import ChartsViewPlugin from "./main";
 import { getWordCount, parseCsv } from "./tools";
 import { DataviewApi, DataObject, Link, DateTime } from "obsidian-dataview";
 
-const functionRegex = /^[\s\n]*function[\s\n]+[\w\W]*\([\w\W]*\)[\s\n]*\{[\w\W]*\}[\s\n]*/i;
+const functionRegex = /^\s*function\s*.*\(.*\)\s*\{[\w\W]*\}\s*/i;
 
 type DataOptionType = DataType | Options | string;
 
@@ -79,7 +79,7 @@ async function parseMultiViewConfig(dataProps: DataProps, data: DataType, option
     }
 
     for (let v of temp.values()) {
-        views.push({ data: await loadFromFile(v["data"], plugin, sourcePath) || data, ...v["options"] });
+        views.push({ data: await loadFromFile(v["data"], plugin, sourcePath) || data, ...stringToFunction(v["options"] || {}) });
     }
 
     return { views, ...options };

@@ -49,7 +49,7 @@ export default class ChartsViewPlugin extends Plugin {
 			
 			this.addCommand({
 				id: 'insert-chartsview-template',
-				name: 'Insert Template ...',
+				name: 'Insert Template',
 				editorCallback: (editor) => {
 					new ChartTemplateSuggestModal(this.app, editor).open();
 				}
