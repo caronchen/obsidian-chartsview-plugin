@@ -7,6 +7,9 @@ This is a data visualization plugin for [Obsidian](https://obsidian.md), based o
 - [Obsidian Charts View Plugin](#obsidian-charts-view-plugin)
   - [Chart Templates](#chart-templates)
     - [Word Count](#word-count)
+      - [Multi files](#multi-files)
+      - [ALL files](#all-files)
+      - [Folder](#folder)
     - [Pie](#pie)
     - [WordCloud](#wordcloud)
     - [Treemap](#treemap)
@@ -53,6 +56,20 @@ options:
 ```
 ![image](https://user-images.githubusercontent.com/150803/136478725-be28a56b-0075-4f0a-a719-f61b30e83b6a.png)
 
+#### Multi files
+```
+data: "wordcount:Words,PARA,@Inbox/"
+```
+
+#### ALL files
+```
+data: "wordcount:/"
+```
+
+#### Folder
+```
+data: "wordcount:@Inbox/"
+```
 
 ### Pie
 Use command `Insert Template` -> `Pie` to insert code block.

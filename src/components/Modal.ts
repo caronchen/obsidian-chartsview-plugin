@@ -1,7 +1,7 @@
 import { App, Editor, FuzzyMatch, FuzzySuggestModal } from 'obsidian';
 import { ChartTemplateType, ChartThumbnailMapping } from '../templates';
 import { insertEditor } from '../tools';
-import { Buffer } from 'buffer/';
+import { Buffer } from 'buffer';
 
 export class ChartTemplateSuggestModal extends FuzzySuggestModal<ChartTemplateType> {
 

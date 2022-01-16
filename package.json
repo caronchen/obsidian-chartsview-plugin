@@ -1,30 +1,33 @@
 {
   "name": "obsidian-chartsview-plugin",
-  "version": "1.1.2",
-  "description": "This is a charts view plugin for Obsidian (https://obsidian.md)",
+  "version": "1.1.3",
+  "description": "Data visualization solution in Obsidian based on Ant Design Charts.",
   "main": "main.js",
   "scripts": {
-    "dev": "rollup --config rollup.config.js -w",
-    "debug": "rollup --config rollup.config.js -w --environment BUILD:debug",
-    "build": "rollup --config rollup.config.js --environment BUILD:production"
+    "dev": "node esbuild.config.mjs",
+    "build": "node esbuild.config.mjs production"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "chart",
+    "obsidian",
+    "obsidian-plugin"
+  ],
+  "author": "caronchen",
   "license": "MIT",
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^20.0.0",
-    "@rollup/plugin-node-resolve": "^13.0.4",
-    "@rollup/plugin-typescript": "^8.2.5",
-    "@types/js-yaml": "^4.0.3",
-    "@types/node": "^16.9.1",
-    "@types/papaparse": "^5.2.6",
-    "@types/react": "^17.0.20",
-    "@types/react-dom": "^17.0.9",
-    "obsidian": "^0.12.11",
+    "@types/js-yaml": "^4.0.5",
+    "@types/node": "^16.11.6",
+    "@types/papaparse": "^5.3.1",
+    "@types/react": "^17.0.36",
+    "@types/react-dom": "^17.0.11",
+    "@typescript-eslint/eslint-plugin": "^5.2.0",
+    "@typescript-eslint/parser": "^5.2.0",
+    "builtin-modules": "^3.2.0",
+    "esbuild": "0.13.12",
+    "obsidian": "^0.12.17",
     "obsidian-dataview": "^0.4.20",
-    "rollup": "^2.56.3",
     "tslib": "^2.3.1",
-    "typescript": "^4.4.3"
+    "typescript": "^4.4.4"
   },
   "dependencies": {
     "@ant-design/charts": "^1.2.13",
