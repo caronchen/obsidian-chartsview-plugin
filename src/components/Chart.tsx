@@ -1,55 +1,75 @@
-import React from "react";
-import Charts, { Plot } from "@ant-design/charts";
-import ErrorBoundary from "@ant-design/charts/lib/errorBoundary";
-import { LooseObject } from "@antv/g2/lib/interface";
+import React, {useRef} from "react";
+import * as Plots from "@ant-design/plots";
+import * as Graphs from "@ant-design/graphs";
+import ErrorBoundary from "@ant-design/plots/es/errorBoundary";
 
 export interface ChartProps {
   type: string;
   config: ConfigProps;
+  showExportBtn: boolean;
 }
 
-export type DataType = object[] | object;
+export type DataType = Record<string, unknown>[] | Record<string, unknown> | unknown;
 
 export interface ConfigProps {
   data?: DataType;
-  theme?: LooseObject;
+  theme?: Record<string, unknown>;
   backgroundColor?: string;
 	padding?: number[];
 }
 
-Charts.G2.registerTheme("theme1", {
+Plots.G2.registerTheme("theme1", {
   colors10: ["#FF6B3B", "#626681", "#FFC100", "#9FB40F", "#76523B", "#DAD5B5", "#0E8E89", "#E19348", "#F383A2", "#247FEA"],
   colors20: ["#FF6B3B", "#626681", "#FFC100", "#9FB40F", "#76523B", "#DAD5B5", "#0E8E89", "#E19348", "#F383A2", "#247FEA", "#2BCB95", "#B1ABF4", "#1D42C2", "#1D9ED1", "#D64BC0", "#255634", "#8C8C47", "#8CDAE5", "#8E283B", "#791DC9"]
 });
 
-Charts.G2.registerTheme("theme2", {
+Plots.G2.registerTheme("theme2", {
   "colors10": ["#025DF4", "#DB6BCF", "#2498D1", "#BBBDE6", "#4045B2", "#21A97A", "#FF745A", "#007E99", "#FFA8A8", "#2391FF"],
   "colors20": ["#025DF4", "#DB6BCF", "#2498D1", "#BBBDE6", "#4045B2", "#21A97A", "#FF745A", "#007E99", "#FFA8A8", "#2391FF", "#FFC328", "#A0DC2C", "#946DFF", "#626681", "#EB4185", "#CD8150", "#36BCCB", "#327039", "#803488", "#83BC99"]
 });
 
-export const Chart = ({ type, config }: ChartProps) => {
+export const Chart = ({ type, config, showExportBtn = false }: ChartProps) => {
   // @ts-ignore
-  const Component = Charts[type];
+  const Component = Plots[type] || Graphs[type];
+  const ref = useRef();
+  let exportBtn;
+  if (showExportBtn) {
+    const downloadImage = () => {
+      // @ts-ignore
+      ref.current?.downloadImage(`${type}.png`);
+    };
+    exportBtn = <div className="chartsview-export-button" aria-label="Export to PNG" onClick={downloadImage}>
+      <svg className="code-glyph" viewBox="0 0 1024 1024" width="16" height="16">
+        <path fill="currentColor" stroke="currentColor" d="M896 166.4H128c-25.6 0-42.666667 17.066667-42.666667 42.666667v597.333333c0 25.6 17.066667 42.666667 42.666667 42.666667h768c25.6 0 42.666667-17.066667 42.666667-42.666667v-597.333333c0-25.6-21.333333-42.666667-42.666667-42.666667z m-42.666667 85.333333v418.133334l-136.533333-136.533334c-21.333333-12.8-51.2-12.8-64 4.266667L554.666667 635.733333l-183.466667-179.2c-17.066667-17.066667-46.933333-17.066667-59.733333 0L170.666667 597.333333V251.733333h682.666666z m-243.2 443.733334l76.8-76.8 136.533334 140.8h-145.066667l-68.266667-64zM170.666667 716.8l170.666666-170.666667 217.6 217.6H170.666667v-46.933333z"></path>
+        <path fill="currentColor" stroke="currentColor" d="M716.8 396.8m-64 0a64 64 0 1 0 128 0 64 64 0 1 0-128 0Z"></path>
+      </svg>
+    </div>;
+  }
+
   return (
     <ErrorBoundary>
-      <Component {...config} onReady={
-        // @ts-ignore
-        (chart) => {
-          if (chart instanceof Plot) {
-            const custom = {} as LooseObject;
-            if (config.theme && config.backgroundColor) {
-              custom.theme = { background: config.backgroundColor };
-            }
-            if (config.padding) {
-              custom.padding = config.padding;
-            }
-            if (custom.theme || config.padding) {
-              chart.update(custom);
+      {exportBtn}
+      <Component
+        {...config}
+        onReady = {
+          // @ts-ignore
+          (chart) => {
+            ref.current = chart;
+            if (chart instanceof Plots.Plot) {
+              const custom = {} as Record<string, unknown>;
+              if (config.theme && config.backgroundColor) {
+                custom.theme = { background: config.backgroundColor };
+              }
+              if (config.padding) {
+                custom.padding = config.padding;
+              }
+              if (custom.theme || config.padding) {
+                chart.update(custom);
+              }
             }
           }
         }
-      }
-    />
+      />
     </ErrorBoundary>
   );
 }

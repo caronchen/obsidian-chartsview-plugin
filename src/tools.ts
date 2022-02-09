@@ -1,14 +1,7 @@
 import Papa  from "papaparse";
 import { App, TFolder, Vault, Editor } from "obsidian";
 
-export interface WordCount {
-    word: string;
-    count: number;
-}
-
-interface WordCountMap {
-    [key: string]: any;
-}
+type WordCount = Record<string, string | number>;
 
 export function insertEditor(editor: Editor, data: string): void {
     editor.somethingSelected
@@ -33,7 +26,7 @@ export function getFolderOptions(app: App) {
     return options;
 }
 
-export function parseCsv(content: string): any {
+export function parseCsv(content: string): unknown {
     return Papa.parse(content, {
         header: true,
         skipEmptyLines: true,
@@ -68,7 +61,7 @@ function getWordCountRegex(): RegExp {
 }
 
 export function getWordCount(text: string, filter: string): WordCount[] {
-    const words = {} as WordCountMap;
+    const words = {} as Record<string, number>;
     const matchs = text.match(getWordCountRegex());
     if (matchs) {
         matchs.forEach(match => {

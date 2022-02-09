@@ -1,12 +1,13 @@
 import { fileDialog } from 'file-select-dialog';
 import yaml from 'js-yaml';
+import 'idempotent-babel-polyfill';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { MarkdownPostProcessorContext, Plugin, Platform } from 'obsidian';
 import { Chart } from './components/Chart';
-import { G2 } from "@ant-design/charts";
+import { G2 } from "@ant-design/plots";
 import { parseConfig } from './parser';
 import { ChartsViewPluginSettings, ChartsViewSettingTab, DEFAULT_SETTINGS } from './settings';
 import { insertEditor, parseCsv } from './tools';
@@ -30,7 +31,7 @@ export default class ChartsViewPlugin extends Plugin {
 			cfg.padding = isPaddingCustomed ? undefined : [this.settings.paddingTop, this.settings.paddingRight,
 				this.settings.paddingBottom, this.settings.paddingLeft];
 			ReactDOM.render(
-				<Chart {...chartProps} />,
+				<Chart {...chartProps} showExportBtn={this.settings.showExportBtn} />,
 				el
 			);
 		} catch (e) {
@@ -39,7 +40,7 @@ export default class ChartsViewPlugin extends Plugin {
 				el
 			);
 		}
-	};
+	}
 
 	async onload() {
 		try {

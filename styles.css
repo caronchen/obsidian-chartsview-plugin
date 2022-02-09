@@ -36,3 +36,20 @@
     width: 300px;
   }
 }
+
+.chartsview-export-button {
+  padding: 5px;
+  position: relative;
+  width: fit-content;
+  display: flex;
+  opacity: 0;
+  transition: opacity 500ms;
+  background-color: var(--interactive-accent);
+  color: var(--text-on-accent);
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.block-language-chartsview:hover .chartsview-export-button {
+  opacity: 1;
+}

@@ -2,7 +2,7 @@
 
 # Obsidian Charts View Plugin
 
-This is a data visualization plugin for [Obsidian](https://obsidian.md), based on [Ant Design Charts](https://charts.ant.design/).
+This is a data visualization plugin for [Obsidian](https://obsidian.md), based on [Ant Design Charts](https://charts.ant.design/). Support plots and graphs.
 
 - [Obsidian Charts View Plugin](#obsidian-charts-view-plugin)
   - [Chart Templates](#chart-templates)

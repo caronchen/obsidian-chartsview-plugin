@@ -13,6 +13,7 @@ export interface ChartsViewPluginSettings {
 	paddingBottom: number;
 	paddingLeft: number;
 	wordCountFilter: string;
+	showExportBtn: boolean;
 }
 
 export const DEFAULT_SETTINGS: ChartsViewPluginSettings = {
@@ -23,6 +24,7 @@ export const DEFAULT_SETTINGS: ChartsViewPluginSettings = {
 	paddingRight: 30,
 	paddingBottom: 30,
 	paddingLeft: 30,
+	showExportBtn: false,
 	wordCountFilter: `[A-z]{1,2}
 [0-9]+
 (?=[MDCLXVI])M*(C[MD]|D?C*)(X[CL]|L?X*)(I[XV]|V?I*)
@@ -69,7 +71,7 @@ export class ChartsViewSettingTab extends PluginSettingTab {
 	}
 
 	display(): void {
-		let { containerEl } = this;
+		const { containerEl } = this;
 		containerEl.empty();
 		containerEl.createEl('h2', {text: 'Charts View Settings'});
 
@@ -154,6 +156,15 @@ export class ChartsViewSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
+			.setName("Show Export Button")
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.showExportBtn)
+				.onChange(async (value) => {
+					this.plugin.settings.showExportBtn = value;
+					await this.plugin.saveSettings();
+				}));
+
+		new Setting(containerEl)
 			.setName("Word Filter")
 			.setDesc("For word count, any words in the list will be ignored.")
 			.addTextArea(text => {
@@ -170,7 +181,6 @@ export class ChartsViewSettingTab extends PluginSettingTab {
 			ReactDOM.render(
 				<>
 					<p>Make a donation to support Charts View plugin development.</p>
-					<p>❤️ Thank you for your support. ❤️</p>
 					<a href="https://paypal.me/caronchenhz" className="paypal">
 						<svg width="145px" height="37px" viewBox="0 0 145 37" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
 							<defs>
