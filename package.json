@@ -1,6 +1,6 @@
 {
   "name": "obsidian-chartsview-plugin",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "Data visualization solution in Obsidian based on Ant Design Charts.",
   "main": "main.js",
   "scripts": {
@@ -30,11 +30,10 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "@ant-design/graphs": "^1.0.8",
-    "@ant-design/plots": "^1.0.8",
+    "@ant-design/graphs": "^1.0.9",
+    "@ant-design/plots": "^1.0.9",
     "buffer": "^6.0.3",
     "file-select-dialog": "^1.5.4",
-    "idempotent-babel-polyfill": "^7.4.4",
     "js-yaml": "^4.1.0",
     "papaparse": "^5.3.1",
     "react": "npm:@preact/compat@^17.0.2",

@@ -1,6 +1,5 @@
 import { fileDialog } from 'file-select-dialog';
 import yaml from 'js-yaml';
-import 'idempotent-babel-polyfill';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
