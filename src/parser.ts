@@ -171,7 +171,8 @@ async function loadFromCsv(data: string, plugin: ChartsViewPlugin): Promise<Data
     const csvFileNames = data.split(",");
     const value = [];
     for (const name of csvFileNames.values()) {
-        const file = plugin.app.vault.getAbstractFileByPath(plugin.settings.dataPath + "/" + name.trim());
+        const path = plugin.settings.dataPath === '/' ? '' : `${plugin.settings.dataPath}/`;
+        const file = plugin.app.vault.getAbstractFileByPath(`${path}${name.trim()}`);
         if (file instanceof TFile) {
             value.push(parseCsv(await plugin.app.vault.read(file)));
         } else {
