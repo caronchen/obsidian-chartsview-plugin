@@ -26,6 +26,12 @@ This is a data visualization plugin for [Obsidian](https://obsidian.md), based o
       - [Multi CSV files](#multi-csv-files)
   - [Dataview Plugin Integration](#dataview-plugin-integration)
     - [Examples](#examples)
+      - [Folder Count](#folder-count)
+      - [Year Count](#year-count)
+      - [Day and Night Count](#day-and-night-count)
+      - [Hour Count](#hour-count)
+      - [Date Count](#date-count)
+      - [Task Count](#task-count)
     - [Allowed methods](#allowed-methods)
   - [Manually installing the plugin](#manually-installing-the-plugin)
   - [Ant Design Charts Demos](#ant-design-charts-demos)
@@ -254,6 +260,8 @@ options:
 ## Dataview Plugin Integration
 
 ### Examples
+
+#### Folder Count
 ```
 #-----------------#
 #- chart data    -#
@@ -267,6 +275,22 @@ data: |
 ```
 ![image](https://user-images.githubusercontent.com/150803/140684190-fa6a08ea-3394-44fe-ae92-265810f6b9a9.png)
 
+#### Year Count
+```
+#-----------------#
+#- chart data    -#
+#-----------------#
+data: |
+  dataviewjs:
+  return dv.pages()
+           .groupBy(p => p.file.cday.toFormat("yyyy/MM"))
+           .map(p => ({cdate: p.key, count: p.rows.length}))
+           .array();
+```
+<img width="1207" alt="image" src="https://user-images.githubusercontent.com/150803/165743596-95f5c93c-1bc4-47ec-872d-adc5041b7fff.png">
+
+
+#### Day and Night Count
 ```
 #-----------------#
 #- chart data    -#
@@ -280,6 +304,7 @@ data: |
 ```
 ![image](https://user-images.githubusercontent.com/150803/140925371-7d645640-db9b-4e43-8828-24b084f298db.png)
 
+#### Hour Count
 ```
 #-----------------#
 #- chart data    -#
@@ -293,6 +318,7 @@ data: |
 ```
 ![image](https://user-images.githubusercontent.com/150803/140925719-a7a1e1c9-c682-4e9b-a491-e103537052de.png)
 
+#### Date Count
 ```
 #-----------------#
 #- chart data    -#
@@ -305,6 +331,41 @@ data: |
 		   .array();
 ```
 ![image](https://user-images.githubusercontent.com/150803/140925781-6d601a13-db73-454b-96af-d3def8cc00e1.png)
+
+#### Task Count
+```chartsview
+#-----------------#
+#- chart type    -#
+#-----------------#
+type: Column
+
+#-----------------#
+#- chart data    -#
+#-----------------#
+data: |
+  dataviewjs:
+  return dv.pages()
+           .flatMap(page => page.file.tasks)
+           .groupBy(task => ({completion: task.completion?? task.created.toFormat("yyyy/MM/dd"), status: task.completed ? 'Done' : 'Undone'}))
+           .map(group => ({cdate: group.key.completion, status: group.key.status, count: group.rows.length}))
+           .array();
+
+#-----------------#
+#- chart options -#
+#-----------------#
+options:
+  isStack: true
+  xField: "cdate"
+  yField: "count"
+  seriesField: 'status'
+  label:
+    position: "middle"
+  xAxis:
+    label:
+      autoHide: false
+      autoRotate: true
+```
+<img width="1177" alt="image" src="https://user-images.githubusercontent.com/150803/165742240-6199a44d-e067-4ea5-9dfa-5e7097904951.png">
 
 
 ### Allowed methods
