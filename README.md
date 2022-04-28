@@ -325,4 +325,4 @@ See [Dataview Codeblock Reference](https://blacksmithgu.github.io/obsidian-datav
 
 ## Ant Design Charts Demos
 
-See https://charts.ant.design/demos/global
+See https://charts.ant.design/en/examples/gallery
