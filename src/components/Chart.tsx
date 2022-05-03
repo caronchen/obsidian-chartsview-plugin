@@ -25,7 +25,7 @@ class ObsidianAction extends Action {
       searchWord = arg ? field[arg.field] : "";
     }
     const tmpLink = window.document.body.createEl('a', {
-      href: `obsidian://search?vault=${encodeURIComponent(arg.vault)}&query=${prefix}${encodeURIComponent(searchWord)}`,
+      href: `obsidian://search?vault=${encodeURIComponent(arg.vault)}&query=${prefix}"${encodeURIComponent(searchWord)}"`,
     });
     tmpLink.click();
     tmpLink.remove();
