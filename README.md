@@ -26,6 +26,8 @@ This is a data visualization plugin for [Obsidian](https://obsidian.md), based o
       - [Multi CSV files](#multi-csv-files)
   - [Dataview Plugin Integration](#dataview-plugin-integration)
     - [Allowed methods](#allowed-methods)
+  - [Interaction](#interaction)
+    - [Enable search interaction](#enable-search-interaction)
   - [Examples](#examples)
   - [Manually installing the plugin](#manually-installing-the-plugin)
   - [Ant Design Charts Demos](#ant-design-charts-demos)
@@ -265,6 +267,45 @@ options:
 * dv.fileLink(path, [embed?], [display-name])
 
 See [Dataview Codeblock Reference](https://blacksmithgu.github.io/obsidian-dataview/api/code-reference/)
+
+## Interaction
+### Enable search interaction
+Enable the Search in Obsidian interaction when click a chart element by add an option `enableSearchInteraction`.
+Use default: 
+```
+#-----------------#
+#- chart options -#
+#-----------------#
+options:
+  ...
+  enableSearchInteraction: true
+```
+or custom:
+```
+#-----------------#
+#- chart options -#
+#-----------------#
+options:
+  ...
+  enableSearchInteraction:
+    field: 'word'
+    operator: 'path'
+```
+- `field` indicate where to get keyword for search.
+- `operator` enums from Obsidian search opertaors:
+  - `default` without operator to search
+  - `tag` as `tag:` operator
+  - `path` as `path:` operator
+  - `file` as `file:` operator
+  - `task` as `task:` operator
+  - `taskTodo` as `task-todo:` operator
+  - `taskDone` as `task-done:` operator
+  - `matchCase` as `match-case:` operator
+  - `ignoreCase` as `ignore-case:` operator
+  - `line` as `line:` operator
+  - `block` as `block:` operator
+  - `content` as `content:` operator
+  - `section` as `section:` operator
 
 ## Examples
 

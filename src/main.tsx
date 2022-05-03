@@ -6,7 +6,6 @@ import ReactDOM from 'react-dom';
 
 import { MarkdownPostProcessorContext, Plugin, Platform } from 'obsidian';
 import { Chart } from './components/Chart';
-import { G2 } from "@ant-design/plots";
 import { parseConfig } from './parser';
 import { ChartsViewPluginSettings, ChartsViewSettingTab, DEFAULT_SETTINGS } from './settings';
 import { insertEditor, parseCsv } from './tools';
@@ -22,15 +21,8 @@ export default class ChartsViewPlugin extends Plugin {
 		ReactDOM.unmountComponentAtNode(el);
 		try {
 			const chartProps = await parseConfig(source, this, ctx.sourcePath);
-			const cfg = chartProps.config;
-			const isBackgroundColorCustomed = cfg.theme && (cfg.theme.background || (cfg.theme.styleSheet && cfg.theme.styleSheet.backgroundColor));
-			const isPaddingCustomed = cfg.padding;
-			cfg.theme = cfg.theme || G2.getTheme(this.settings.theme);
-			cfg.backgroundColor = isBackgroundColorCustomed ? undefined : this.settings.backgroundColor;
-			cfg.padding = isPaddingCustomed ? undefined : [this.settings.paddingTop, this.settings.paddingRight,
-				this.settings.paddingBottom, this.settings.paddingLeft];
 			ReactDOM.render(
-				<Chart {...chartProps} showExportBtn={this.settings.showExportBtn} />,
+				<Chart {...chartProps} />,
 				el
 			);
 		} catch (e) {
@@ -63,7 +55,7 @@ export default class ChartsViewPlugin extends Plugin {
 						const file = await fileDialog({ accept: '.csv', strict: true });
 						const content = await file.text();
 						const records = parseCsv(content);
-						
+
 						insertEditor(
 							editor,
 							yaml.dump(records, { quotingType: '"', noRefs: true })

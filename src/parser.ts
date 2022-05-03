@@ -1,6 +1,7 @@
 import { parseYaml, TFile, TFolder } from "obsidian";
 import * as Plots from '@ant-design/plots';
 import * as Graphs from '@ant-design/graphs';
+import { getTheme } from '@antv/g2';
 import { ChartProps, DataType } from "./components/Chart";
 import ChartsViewPlugin from "./main";
 import { getWordCount, parseCsv } from "./tools";
@@ -22,7 +23,7 @@ interface DataProps {
 
 export async function parseConfig(content: string, plugin: ChartsViewPlugin, sourcePath: string): Promise<ChartProps> {
     const dataProps = parseYaml(content) as DataProps;
-    const type = dataProps.type;
+    const { type, data } = dataProps;
 
     // @ts-ignore
     const chart = Plots[type] || Graphs[type];
@@ -30,20 +31,26 @@ export async function parseConfig(content: string, plugin: ChartsViewPlugin, sou
         throw new Error(`Unsupported chart type ${type}.`);
     }
 
-    const data: DataType = dataProps.data;
     const options = stringToFunction(dataProps.options || {});
+    const config = type == "MultiView" || type == "Mix" ?
+        await parseMultiViewConfig(dataProps, data, options, plugin, sourcePath)
+        :
+        { data: await loadFromFile(data, plugin, sourcePath), ...customOptions(options, plugin) };
+    const { theme, padding } = config;
+    //@ts-ignore
+    const isBgColorCustomed = theme && (theme.background || (theme.styleSheet && theme.styleSheet.backgroundColor));
+    config.theme = theme ?? getTheme(plugin.settings.theme);
+    config.backgroundColor = isBgColorCustomed ? undefined : plugin.settings.backgroundColor;
+    config.padding = padding ? undefined : [
+        plugin.settings.paddingTop, plugin.settings.paddingRight,
+        plugin.settings.paddingBottom, plugin.settings.paddingLeft
+    ];
 
-    if (type == "MultiView" || type == "Mix") {
-        return {
-            type,
-            config: await parseMultiViewConfig(dataProps, data, options, plugin, sourcePath)
-        };
-    } else {
-        return {
-            type,
-            config: { data: await loadFromFile(data, plugin, sourcePath), ...options }
-        };
-    }
+    return {
+        type,
+        showExportBtn: plugin.settings.showExportBtn,
+        config
+    };
 }
 
 function stringToFunction(options: Options): Options {
@@ -62,6 +69,44 @@ function stringToFunction(options: Options): Options {
     return options;
 }
 
+function customOptions(options: Options, plugin: ChartsViewPlugin): Options {
+    const { enableSearchInteraction, interactions } = options;
+    if (enableSearchInteraction !== true && typeof enableSearchInteraction !== "object") {
+        return options;
+    }
+
+    const customedInteractions = interactions?? [];
+    if (!Array.isArray(customedInteractions)) {
+        return options;
+    }
+
+    const interaction = {
+        type: "obsidian-search",
+        cfg: {
+            start: [{
+                trigger: "element:click",
+                action: "obsidian-search:default",
+                arg: {
+                    field: 'text',
+                    vault: plugin.app.vault.getName()
+                }
+            }]
+        }
+    }
+    if (typeof enableSearchInteraction === "object") {
+        //@ts-ignore
+        interaction.cfg.start[0].action = `obsidian-search:${enableSearchInteraction.operator?? "default"}`;
+        //@ts-ignore
+        interaction.cfg.start[0].arg.field = enableSearchInteraction.field?? "text";
+    }
+    customedInteractions.push(interaction);
+
+    delete options.enableSearchInteraction;
+
+    options.interactions = customedInteractions;
+    return options;
+}
+
 async function parseMultiViewConfig(dataProps: DataProps, data: DataType, options: Options, plugin: ChartsViewPlugin, sourcePath: string): Promise<Record<string, unknown>> {
     const temp = new Map<string, Record<string, unknown>>();
     const views: Record<string, unknown>[] = [];
@@ -73,14 +118,14 @@ async function parseMultiViewConfig(dataProps: DataProps, data: DataType, option
             continue;
         }
 
-        const viewType = keyParts[1]; 
+        const viewType = keyParts[1];
         const view = temp.get(viewType) || {};
         view[keyParts[0]] = dataProps[key];
         temp.set(viewType, view);
     }
 
     for (const v of temp.values()) {
-        views.push({ data: await loadFromFile(v["data"], plugin, sourcePath) || data, ...stringToFunction(v["options"] as Options || {}) });
+        views.push({ data: await loadFromFile(v["data"], plugin, sourcePath) || data, ...customOptions(stringToFunction(v["options"] as Options || {}), plugin) });
     }
 
     return { views, ...options };
@@ -181,7 +226,7 @@ async function loadFromCsv(data: string, plugin: ChartsViewPlugin): Promise<Data
     }
     if (value.length == 0) {
         return {};
-    } 
+    }
     if (value.length == 1) {
         return value[0];
     }

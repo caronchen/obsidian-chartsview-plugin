@@ -1,4 +1,5 @@
-import React, {useRef} from "react";
+import React, { useRef } from "react";
+import { registerInteraction, registerAction, Action, registerTheme } from '@antv/g2';
 import * as Plots from "@ant-design/plots";
 import * as Graphs from "@ant-design/graphs";
 import ErrorBoundary from "@ant-design/plots/es/errorBoundary";
@@ -6,8 +7,88 @@ import ErrorBoundary from "@ant-design/plots/es/errorBoundary";
 export interface ChartProps {
   type: string;
   config: ConfigProps;
-  showExportBtn: boolean;
+  showExportBtn?: boolean;
 }
+
+/**
+ * 鼠标形状的 Action
+ */
+class ObsidianAction extends Action {
+
+  private search(arg: Record<string, string>, prefix: string) {
+    const data = this.context.event.data;
+    const {shape, data: field} = data;
+    let searchWord: string = undefined;
+    if (shape === 'word-cloud') {
+      searchWord = field.text;
+    } else {
+      searchWord = arg ? field[arg.field] : "";
+    }
+    const tmpLink = window.document.body.createEl('a', {
+      href: `obsidian://search?vault=${encodeURIComponent(arg.vault)}&query=${prefix}${encodeURIComponent(searchWord)}`,
+    });
+    tmpLink.click();
+    tmpLink.remove();
+  }
+
+  public tag(arg: Record<string, string>) {
+    this.search(arg, "tag%3A");
+  }
+
+  public file(arg: Record<string, string>) {
+    this.search(arg, "file%3A");
+  }
+
+  public path(arg: Record<string, string>) {
+    this.search(arg, "path%3A");
+  }
+
+  public content(arg: Record<string, string>) {
+    this.search(arg, "content%3A");
+  }
+
+  public task(arg: Record<string, string>) {
+    this.search(arg, "task%3A");
+  }
+
+  public matchCase(arg: Record<string, string>) {
+    this.search(arg, "match-case%3A");
+  }
+
+  public ignoreCase(arg: Record<string, string>) {
+    this.search(arg, "ignore-case%3A");
+  }
+
+  public line(arg: Record<string, string>) {
+    this.search(arg, "line%3A");
+  }
+
+  public block(arg: Record<string, string>) {
+    this.search(arg, "block%3A");
+  }
+
+  public taskTodo(arg: Record<string, string>) {
+    this.search(arg, "task-todo%3A");
+  }
+
+  public taskDone(arg: Record<string, string>) {
+    this.search(arg, "task-done%3A");
+  }
+
+  public section(arg: Record<string, string>) {
+    this.search(arg, "section%3A");
+  }
+
+  public default(arg: Record<string, string>) {
+    this.search(arg, "");
+  }
+}
+
+registerAction('obsidian-search', ObsidianAction);
+
+registerInteraction('obsidian-search', {
+  start: [{ trigger: 'element:click', action: 'obsidian-search:default'}]
+});
 
 export type DataType = Record<string, unknown>[] | Record<string, unknown> | unknown;
 
@@ -15,15 +96,15 @@ export interface ConfigProps {
   data?: DataType;
   theme?: Record<string, unknown>;
   backgroundColor?: string;
-	padding?: number[];
+  padding?: number[];
 }
 
-Plots.G2.registerTheme("theme1", {
+registerTheme("theme1", {
   colors10: ["#FF6B3B", "#626681", "#FFC100", "#9FB40F", "#76523B", "#DAD5B5", "#0E8E89", "#E19348", "#F383A2", "#247FEA"],
   colors20: ["#FF6B3B", "#626681", "#FFC100", "#9FB40F", "#76523B", "#DAD5B5", "#0E8E89", "#E19348", "#F383A2", "#247FEA", "#2BCB95", "#B1ABF4", "#1D42C2", "#1D9ED1", "#D64BC0", "#255634", "#8C8C47", "#8CDAE5", "#8E283B", "#791DC9"]
 });
 
-Plots.G2.registerTheme("theme2", {
+registerTheme("theme2", {
   "colors10": ["#025DF4", "#DB6BCF", "#2498D1", "#BBBDE6", "#4045B2", "#21A97A", "#FF745A", "#007E99", "#FFA8A8", "#2391FF"],
   "colors20": ["#025DF4", "#DB6BCF", "#2498D1", "#BBBDE6", "#4045B2", "#21A97A", "#FF745A", "#007E99", "#FFA8A8", "#2391FF", "#FFC328", "#A0DC2C", "#946DFF", "#626681", "#EB4185", "#CD8150", "#36BCCB", "#327039", "#803488", "#83BC99"]
 });
@@ -51,7 +132,7 @@ export const Chart = ({ type, config, showExportBtn = false }: ChartProps) => {
       {exportBtn}
       <Component
         {...config}
-        onReady = {
+        onReady={
           // @ts-ignore
           (chart) => {
             ref.current = chart;
