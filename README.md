@@ -292,7 +292,7 @@ options:
     operator: 'path'
 ```
 - `field` indicate where to get keyword for search.
-- `operator` enums from Obsidian search opertaors:
+- `operator` enums from [Obsidian search opertaors](https://help.obsidian.md/Plugins/Search#Search+operators):
   - `default` without operator to search
   - `tag` as `tag:` operator
   - `path` as `path:` operator
