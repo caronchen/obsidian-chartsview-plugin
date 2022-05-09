@@ -293,19 +293,22 @@ options:
 ```
 - `field` indicate where to get keyword for search.
 - `operator` enums from [Obsidian search opertaors](https://help.obsidian.md/Plugins/Search#Search+operators):
-  - `default` without operator to search
-  - `tag` as `tag:` operator
-  - `path` as `path:` operator
-  - `file` as `file:` operator
-  - `task` as `task:` operator
-  - `taskTodo` as `task-todo:` operator
-  - `taskDone` as `task-done:` operator
-  - `matchCase` as `match-case:` operator
-  - `ignoreCase` as `ignore-case:` operator
-  - `line` as `line:` operator
-  - `block` as `block:` operator
-  - `content` as `content:` operator
-  - `section` as `section:` operator
+
+| operator     | Obsidian search opertaor |
+| ------------ | ------------------------ |
+| `default`    |                          |
+| `tag`        | `tag:`                   |
+| `path`       | `path:`                  |
+| `file`       | `file:`                  |
+| `task`       | `task:`                  |
+| `taskTodo`   | `task-todo:`             |
+| `taskDone`   | `task-done:`             |
+| `matchCase`  | `match-case:`            |
+| `ignoreCase` | `ignore-case:`           |
+| `line`       | `line:`                  |
+| `block`      | `block:`                 |
+| `content`    | `content:`               |
+| `section`    | `section:`               |
 
 ## Examples
 
