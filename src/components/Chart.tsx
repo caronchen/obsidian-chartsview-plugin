@@ -10,12 +10,17 @@ export interface ChartProps {
   showExportBtn?: boolean;
 }
 
+const WITHOUT_WRAPPER = (searchWord: string) => encodeURIComponent(searchWord);
+const PARENTHESIS_WRAPPER = (searchWord: string) => `(${encodeURIComponent(searchWord)})`;
+const QUOTE_WRAPPER = (searchWord: string) => `"${encodeURIComponent(searchWord)}"`;
+const PARENTHESIS_QUOTE_WRAPPER = (searchWord: string) => `("${encodeURIComponent(searchWord)}")`;
+
 /**
  * 鼠标形状的 Action
  */
 class ObsidianAction extends Action {
 
-  private search(arg: Record<string, string>, prefix: string) {
+  private search(arg: Record<string, string>, prefix: string, replacer?: (searchWord: string) => string) {
     const data = this.context.event.data;
     const {shape, data: field} = data;
     let searchWord: string = undefined;
@@ -24,63 +29,66 @@ class ObsidianAction extends Action {
     } else {
       searchWord = arg ? field[arg.field] : "";
     }
+    if (replacer) {
+      searchWord = replacer(searchWord);
+    }
     const tmpLink = window.document.body.createEl('a', {
-      href: `obsidian://search?vault=${encodeURIComponent(arg.vault)}&query=${prefix}"${encodeURIComponent(searchWord)}"`,
+      href: `obsidian://search?vault=${encodeURIComponent(arg.vault)}&query=${prefix}${searchWord}`,
     });
     tmpLink.click();
     tmpLink.remove();
   }
 
   public tag(arg: Record<string, string>) {
-    this.search(arg, "tag%3A");
+    this.search(arg, "tag%3A", WITHOUT_WRAPPER);
   }
 
   public file(arg: Record<string, string>) {
-    this.search(arg, "file%3A");
+    this.search(arg, "file%3A", PARENTHESIS_QUOTE_WRAPPER);
   }
 
   public path(arg: Record<string, string>) {
-    this.search(arg, "path%3A");
+    this.search(arg, "path%3A", PARENTHESIS_QUOTE_WRAPPER);
   }
 
   public content(arg: Record<string, string>) {
-    this.search(arg, "content%3A");
+    this.search(arg, "content%3A", PARENTHESIS_WRAPPER);
   }
 
   public task(arg: Record<string, string>) {
-    this.search(arg, "task%3A");
+    this.search(arg, "task%3A", PARENTHESIS_WRAPPER);
   }
 
   public matchCase(arg: Record<string, string>) {
-    this.search(arg, "match-case%3A");
+    this.search(arg, "match-case%3A", PARENTHESIS_WRAPPER);
   }
 
   public ignoreCase(arg: Record<string, string>) {
-    this.search(arg, "ignore-case%3A");
+    this.search(arg, "ignore-case%3A", PARENTHESIS_WRAPPER);
   }
 
   public line(arg: Record<string, string>) {
-    this.search(arg, "line%3A");
+    this.search(arg, "line%3A", PARENTHESIS_WRAPPER);
   }
 
   public block(arg: Record<string, string>) {
-    this.search(arg, "block%3A");
+    this.search(arg, "block%3A", PARENTHESIS_WRAPPER);
   }
 
   public taskTodo(arg: Record<string, string>) {
-    this.search(arg, "task-todo%3A");
+    this.search(arg, "task-todo%3A", PARENTHESIS_WRAPPER);
   }
 
   public taskDone(arg: Record<string, string>) {
-    this.search(arg, "task-done%3A");
+    this.search(arg, "task-done%3A", PARENTHESIS_WRAPPER);
   }
 
   public section(arg: Record<string, string>) {
-    this.search(arg, "section%3A");
+    this.search(arg, "section%3A", PARENTHESIS_WRAPPER);
   }
 
   public default(arg: Record<string, string>) {
-    this.search(arg, "");
+    this.search(arg, "", QUOTE_WRAPPER);
   }
 }
 
