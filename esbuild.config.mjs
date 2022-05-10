@@ -17,6 +17,7 @@ esbuild.build({
 	},
 	entryPoints: ['src/main.tsx'],
 	bundle: true,
+	minify: prod,
 	external: ['obsidian', 'electron', ...builtins],
 	format: 'cjs',
 	watch: !prod,
