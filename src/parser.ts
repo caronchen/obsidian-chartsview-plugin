@@ -36,12 +36,18 @@ export async function parseConfig(content: string, plugin: ChartsViewPlugin, sou
         await parseMultiViewConfig(dataProps, data, options, plugin, sourcePath)
         :
         { data: await loadFromFile(data, plugin, sourcePath), ...customOptions(options, plugin) };
-    const { theme, padding } = config;
+
     //@ts-ignore
-    const isBgColorCustomed = theme && (theme.background || (theme.styleSheet && theme.styleSheet.backgroundColor));
-    config.theme = theme ?? getTheme(plugin.settings.theme);
-    config.backgroundColor = isBgColorCustomed ? undefined : plugin.settings.backgroundColor;
-    config.padding = padding ? undefined : [
+    const useDefaultBgColor = config.theme?.background === undefined && config.theme?.styleSheet?.backgroundColor === undefined;
+
+    config.theme = config.theme ?? getTheme(plugin.settings.theme);
+
+    if (useDefaultBgColor) {
+        //@ts-ignore
+        config.theme.background = plugin.settings.backgroundColor;
+    }
+
+    config.appendPadding = config.appendPadding ?? [
         plugin.settings.paddingTop, plugin.settings.paddingRight,
         plugin.settings.paddingBottom, plugin.settings.paddingLeft
     ];
@@ -75,7 +81,7 @@ function customOptions(options: Options, plugin: ChartsViewPlugin): Options {
         return options;
     }
 
-    const customedInteractions = interactions?? [];
+    const customedInteractions = interactions ?? [];
     if (!Array.isArray(customedInteractions)) {
         return options;
     }
@@ -95,9 +101,9 @@ function customOptions(options: Options, plugin: ChartsViewPlugin): Options {
     }
     if (typeof enableSearchInteraction === "object") {
         //@ts-ignore
-        interaction.cfg.start[0].action = `obsidian-search:${enableSearchInteraction.operator?? "default"}`;
+        interaction.cfg.start[0].action = `obsidian-search:${enableSearchInteraction.operator ?? "default"}`;
         //@ts-ignore
-        interaction.cfg.start[0].arg.field = enableSearchInteraction.field?? "text";
+        interaction.cfg.start[0].arg.field = enableSearchInteraction.field ?? "text";
     }
     customedInteractions.push(interaction);
 

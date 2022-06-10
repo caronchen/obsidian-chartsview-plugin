@@ -18,10 +18,10 @@ export const DEFAULT_SETTINGS: ChartsViewPluginSettings = {
 	theme: 'default',
 	dataPath: '',
 	backgroundColor: 'transparent',
-	paddingTop: 30,
-	paddingRight: 30,
-	paddingBottom: 30,
-	paddingLeft: 30,
+	paddingTop: 0,
+	paddingRight: 0,
+	paddingBottom: 0,
+	paddingLeft: 0,
 	showExportBtn: false,
 	wordCountFilter: `[A-z]{1,2}
 [0-9]+

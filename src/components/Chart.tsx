@@ -22,7 +22,7 @@ class ObsidianAction extends Action {
 
   private search(arg: Record<string, string>, prefix: string, replacer?: (searchWord: string) => string) {
     const data = this.context.event.data;
-    const {shape, data: field} = data;
+    const { shape, data: field } = data;
     let searchWord: string = undefined;
     if (shape === 'word-cloud') {
       searchWord = field.text;
@@ -95,7 +95,7 @@ class ObsidianAction extends Action {
 registerAction('obsidian-search', ObsidianAction);
 
 registerInteraction('obsidian-search', {
-  start: [{ trigger: 'element:click', action: 'obsidian-search:default'}]
+  start: [{ trigger: 'element:click', action: 'obsidian-search:default' }]
 });
 
 export type DataType = Record<string, unknown>[] | Record<string, unknown> | unknown;
@@ -104,7 +104,6 @@ export interface ConfigProps {
   data?: DataType;
   theme?: Record<string, unknown>;
   backgroundColor?: string;
-  padding?: number[];
 }
 
 registerTheme("theme1", {
@@ -140,24 +139,6 @@ export const Chart = ({ type, config, showExportBtn = false }: ChartProps) => {
       {exportBtn}
       <Component
         {...config}
-        onReady={
-          // @ts-ignore
-          (chart) => {
-            ref.current = chart;
-            if (chart instanceof Plots.Plot) {
-              const custom = {} as Record<string, unknown>;
-              if (config.theme && config.backgroundColor) {
-                custom.theme = { background: config.backgroundColor };
-              }
-              if (config.padding) {
-                custom.padding = config.padding;
-              }
-              if (custom.theme || config.padding) {
-                chart.update(custom);
-              }
-            }
-          }
-        }
       />
     </ErrorBoundary>
   );
