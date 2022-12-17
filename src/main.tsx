@@ -10,6 +10,7 @@ import { parseConfig } from './parser';
 import { ChartsViewPluginSettings, ChartsViewSettingTab, DEFAULT_SETTINGS } from './settings';
 import { insertEditor, parseCsv } from './tools';
 import { ChartTemplateSuggestModal } from './components/Modal';
+import { ChartWizardModal } from './components/ChartWizardModal';
 
 const CSV_FILE_EXTENSION = "csv";
 const VIEW_TYPE_CSV = "csv";
@@ -44,6 +45,14 @@ export default class ChartsViewPlugin extends Plugin {
 				name: 'Insert Template',
 				editorCallback: (editor) => {
 					new ChartTemplateSuggestModal(this.app, editor).open();
+				}
+			});
+			
+			this.addCommand({
+				id: `chartsview-wizard`,
+				name: `Wizard`,
+				editorCallback: async (editor) => {
+					new ChartWizardModal(this.app, editor, this.settings).open();
 				}
 			});
 

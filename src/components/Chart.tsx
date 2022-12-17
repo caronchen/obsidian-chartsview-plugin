@@ -104,6 +104,7 @@ export interface ConfigProps {
   data?: DataType;
   theme?: Record<string, unknown>;
   backgroundColor?: string;
+  [key: string]: DataType | string | number;
 }
 
 registerTheme("theme1", {
