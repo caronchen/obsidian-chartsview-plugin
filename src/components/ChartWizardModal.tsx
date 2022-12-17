@@ -1,6 +1,6 @@
 import { App, Editor, Modal, Setting, stringifyYaml } from "obsidian";
 import React from "react";
-import { render } from 'react-dom';
+import { render, unmountComponentAtNode } from 'react-dom';
 import { ChartsViewPluginSettings } from "src/settings";
 import { Chart, ChartProps } from "./Chart";
 import { insertEditor } from "src/tools";
@@ -238,7 +238,10 @@ export class ChartWizardModal extends Modal {
       .addButton(button => button
         .setClass("mod-cta")
         .setButtonText("Insert Yaml!")
-        .onClick(e => insertEditor(this.editor, this.genYaml()))
+        .onClick(e => {
+          insertEditor(this.editor, this.genYaml());
+          this.close();
+        })
       );
   }
 
@@ -247,9 +250,6 @@ export class ChartWizardModal extends Modal {
     const data = { data: this.chartSetting.config.data };
     const options = { options: { ...this.chartSetting.config } };
     delete options.options.data;
-
-    console.log(this.chartSetting.config);
-    console.log(options);
 
     return `\
 \`\`\`chartsview
@@ -276,6 +276,7 @@ ${stringifyYaml(options)}\
   }
 
   onClose() {
+    unmountComponentAtNode(this.chartEl);
     this.contentEl.empty();
   }
 }
