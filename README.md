@@ -1,5 +1,7 @@
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/caronchen/obsidian-chartsview-plugin) ![GitHub all releases](https://img.shields.io/github/downloads/caronchen/obsidian-chartsview-plugin/total) ![GitHub Release Date](https://img.shields.io/github/release-date/caronchen/obsidian-chartsview-plugin) ![GitHub last commit](https://img.shields.io/github/last-commit/caronchen/obsidian-chartsview-plugin)
 
+<a href="https://www.buymeacoffee.com/caronchen"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=caronchen&button_colour=FF5F5F&font_colour=ffffff&font_family=Arial&outline_colour=000000&coffee_colour=FFDD00" /></a>
+
 # Obsidian Charts View Plugin
 
 This is a data visualization plugin for [Obsidian](https://obsidian.md), based on [Ant Design Charts](https://charts.ant.design/). Support plots and graphs.
