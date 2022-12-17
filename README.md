@@ -132,6 +132,15 @@ Use command `Charts View: Insert Template` -> `Dataviewjs Example (Column)` to i
 ## Chart Wizard
 Use command `Charts View: Wizard` to insert code block.
 
+<img width="735" alt="image" src="https://user-images.githubusercontent.com/150803/208235339-87f12358-b276-43d5-bdb1-f6ce92cfdbae.png">
+
+<img width="867" alt="image" src="https://user-images.githubusercontent.com/150803/208235398-8deeccff-33c7-42e0-9d9a-925a4b2bffa8.png">
+
+<img width="868" alt="image" src="https://user-images.githubusercontent.com/150803/208235409-944cc2b1-1aac-4e0c-a0c8-7c4c54856f9f.png">
+
+<img width="732" alt="image" src="https://user-images.githubusercontent.com/150803/208235436-f48bafef-7920-4922-b012-424c25de30c9.png">
+
+
 ## Data from CSV file
 
 ### Import data from external CSV file (Desktop)
