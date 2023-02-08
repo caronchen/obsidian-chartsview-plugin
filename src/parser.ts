@@ -140,7 +140,8 @@ async function parseMultiViewConfig(dataProps: DataProps, data: DataType, option
 async function loadFromFile(data: DataOptionType, plugin: ChartsViewPlugin, sourcePath: string): Promise<DataType> {
     if (typeof data === "string") {
         if (data.startsWith("wordcount:")) {
-            return loadFromMdWordCount(data.replace("wordcount:", ""), plugin);
+            const file = data.replace("wordcount:", "");
+            return loadFromMdWordCount(file.length > 0 ? file : (plugin.app.vault.getAbstractFileByPath(sourcePath) as TFile).basename, plugin);
         } else if (data.startsWith("dataviewjs:")) {
             return loadFromDataViewPlugin(data.replace("dataviewjs:", ""), plugin, sourcePath);
         } else {
