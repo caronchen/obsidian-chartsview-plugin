@@ -94,6 +94,7 @@ function customOptions(options: Options, plugin: ChartsViewPlugin): Options {
                 action: "obsidian-search:default",
                 arg: {
                     field: 'text',
+                    pathField: 'path',
                     vault: plugin.app.vault.getName()
                 }
             }]
@@ -104,6 +105,8 @@ function customOptions(options: Options, plugin: ChartsViewPlugin): Options {
         interaction.cfg.start[0].action = `obsidian-search:${enableSearchInteraction.operator ?? "default"}`;
         //@ts-ignore
         interaction.cfg.start[0].arg.field = enableSearchInteraction.field ?? "text";
+        //@ts-ignore
+        interaction.cfg.start[0].arg.pathField = enableSearchInteraction.pathField ?? "path";
     }
     customedInteractions.push(interaction);
 

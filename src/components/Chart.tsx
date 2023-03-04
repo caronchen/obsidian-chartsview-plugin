@@ -32,9 +32,23 @@ class ObsidianAction extends Action {
     if (replacer) {
       searchWord = replacer(searchWord);
     }
-    const tmpLink = window.document.body.createEl('a', {
-      href: `obsidian://search?vault=${encodeURIComponent(arg.vault)}&query=${prefix}${searchWord}`,
-    });
+    this.openScheme(`obsidian://search?vault=${encodeURIComponent(arg.vault)}&query=${prefix}${searchWord}`);
+  }
+
+  private openNote(arg: Record<string, string>) {
+    const data = this.context.event.data;
+    const { shape, data: field } = data;
+    let path: string = undefined;
+    if (shape === 'word-cloud') {
+      path = field.datum[arg.pathField];
+    } else {
+      path = field[arg.pathField];
+    }
+    this.openScheme(`obsidian://vault/${encodeURIComponent(arg.vault)}/${path}`);
+  }
+
+  private openScheme(url: string) {
+    const tmpLink = window.document.body.createEl('a', {href: url});
     tmpLink.click();
     tmpLink.remove();
   }
@@ -45,6 +59,10 @@ class ObsidianAction extends Action {
 
   public file(arg: Record<string, string>) {
     this.search(arg, "file%3A", PARENTHESIS_QUOTE_WRAPPER);
+  }
+
+  public fileopen(arg: Record<string, string>) {
+    this.openNote(arg);
   }
 
   public path(arg: Record<string, string>) {
