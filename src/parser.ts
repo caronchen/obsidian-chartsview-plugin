@@ -5,7 +5,7 @@ import { getTheme } from '@antv/g2';
 import { ChartProps, DataType } from "./components/Chart";
 import ChartsViewPlugin from "./main";
 import { getWordCount, parseCsv } from "./tools";
-import { DataviewAPI, Link, DateTime, LiteralValue } from "obsidian-dataview";
+import { DataviewApi, Link, DateTime, Literal } from "obsidian-dataview";
 import { DataArray } from "obsidian-dataview/lib/api/data-array";
 
 const functionRegex = /^\s*function\s*.*\(.*\)\s*\{[\w\W]*\}\s*/i;
@@ -32,7 +32,7 @@ export async function parseConfig(content: string, plugin: ChartsViewPlugin, sou
     }
 
     const options = stringToFunction(dataProps.options || {});
-    const config = type == "MultiView" || type == "Mix" ?
+    const config = (type === "MultiView" || type === "Mix") ?
         await parseMultiViewConfig(dataProps, data, options, plugin, sourcePath)
         :
         { data: await loadFromFile(data, plugin, sourcePath), ...customOptions(options, plugin) };
@@ -155,18 +155,18 @@ async function loadFromFile(data: DataOptionType, plugin: ChartsViewPlugin, sour
     }
 }
 
-const dataViewApiProxy = function (api: DataviewAPI, currentFilePath: string) {
+const dataViewApiProxy = function (api: DataviewApi, currentFilePath: string) {
     return {
         pagePaths: function (query?: string): DataArray<string> {
             return api.pagePaths(query, currentFilePath);
         },
-        page: function (path: string | Link): Record<string, LiteralValue> | undefined {
+        page: function (path: string | Link): Record<string, Literal> | undefined {
             return api.page(path, currentFilePath);
         },
-        pages: function (query?: string): DataArray<Record<string, LiteralValue>> {
+        pages: function (query?: string): DataArray<Record<string, Literal>> {
             return api.pages(query, currentFilePath);
         },
-        current: function (): Record<string, LiteralValue> | undefined {
+        current: function (): Record<string, Literal> | undefined {
             return api.page(currentFilePath, currentFilePath);
         },
         array: function (raw: unknown): DataArray<any> {
@@ -176,8 +176,7 @@ const dataViewApiProxy = function (api: DataviewAPI, currentFilePath: string) {
             return api.isArray(raw);
         },
         fileLink: function (path: string, embed?: boolean, display?: string): Link {
-            // @ts-ignore
-            return Link.file(path, embed, display);
+            return api.fileLink(path, embed, display);
         },
         date: function (pathlike: string | Link | DateTime): DateTime | null {
             return api.date(pathlike);
@@ -187,7 +186,7 @@ const dataViewApiProxy = function (api: DataviewAPI, currentFilePath: string) {
 
 async function loadFromDataViewPlugin(content: string, plugin: ChartsViewPlugin, sourcePath: string): Promise<DataType> {
     if (plugin.app.plugins.enabledPlugins.has("dataview")) {
-        const api: DataviewAPI = plugin.app.plugins.plugins.dataview?.api;
+        const api: DataviewApi = plugin.app.plugins.plugins.dataview?.api;
         if (api) {
             return new Function("dv", content).call(undefined, dataViewApiProxy(api, sourcePath));
         } else {

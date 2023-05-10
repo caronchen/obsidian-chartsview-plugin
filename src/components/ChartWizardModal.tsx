@@ -5,10 +5,29 @@ import { ChartsViewPluginSettings } from "src/settings";
 import { Chart, ChartProps } from "./Chart";
 import { insertEditor } from "src/tools";
 
-type DataType = { field: string; value: string[]; };
-type Preferences = { valuesFieldKey: string; labelsFieldKey: string; seriesFieldKey: string; };
+type DataType = {
+  field: string;
+  value: string[];
+};
 
-const DEFAULT: Preferences = { labelsFieldKey: 'xField', valuesFieldKey: 'yField', seriesFieldKey: 'seriesField' };
+type Preferences = {
+  valuesFieldKey: string;
+  labelsFieldKey: string;
+  seriesFieldKey: string;
+  labels?: DataType;
+  values?: DataType[];
+  series?: DataType;
+};
+
+const DEFAULT: Preferences = {
+  labelsFieldKey: 'xField',
+  valuesFieldKey: 'yField',
+  seriesFieldKey: 'seriesField',
+  labels: { field: 'label', value: ['1951','1952','1956','1957','1958'] } as DataType,
+  values: [{ field: 'value', value: ['38','52','61','145','48'] }] as DataType[],
+  series: { field: 'serie' } as DataType,
+};
+
 const VALUE_INPUT_SIZE = 80;
 const NAME_INPUT_SIZE = 14;
 const DEFAULT_CHART_TYPE = 'Area';
@@ -41,6 +60,7 @@ const ChartTypes: Record<string, string> = {
   'Violin': 'Violin',
   'Waterfall': 'Waterfall',
   'WordCloud': 'WordCloud',
+  'Scatter': 'Scatter',
 };
 
 const ChartPreferences: Record<string, Preferences> = {
@@ -72,9 +92,9 @@ export class ChartWizardModal extends Modal {
     this.modalEl.style.width = '860px';
     this.titleEl.createEl('h2', { text: 'Chart Wizard' });
     this.chartSetting = { type: DEFAULT_CHART_TYPE, config: {} } as ChartProps;
-    this.dataLabels = { field: 'label' } as DataType;
-    this.dataValues = [{ field: 'value' }] as DataType[];
-    this.dataSeries = { field: 'serie' } as DataType;
+    this.dataLabels = (ChartPreferences[this.chartSetting.type] ?? DEFAULT).labels;
+    this.dataValues = (ChartPreferences[this.chartSetting.type] ?? DEFAULT).values;
+    this.dataSeries = (ChartPreferences[this.chartSetting.type] ?? DEFAULT).series;
     this.valueNumber = 1;
     /*
     this.interaction = { operator: 'default', field: this.dataLabels.field, enabled: false };
