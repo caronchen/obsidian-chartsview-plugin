@@ -322,6 +322,7 @@ options:
 | `block`      | `block:`                 |
 | `content`    | `content:`               |
 | `section`    | `section:`               |
+| `fileopen`   | Open a file inside Vault |
 
 ## Examples
 
