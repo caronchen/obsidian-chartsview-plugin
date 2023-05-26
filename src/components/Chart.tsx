@@ -122,6 +122,7 @@ export interface ConfigProps {
   data?: DataType;
   theme?: Record<string, unknown>;
   backgroundColor?: string;
+  onReady?: (instance: unknown) => void;
   [key: string]: DataType | string | number;
 }
 
@@ -139,6 +140,7 @@ export const Chart = ({ type, config, showExportBtn = false }: ChartProps) => {
   // @ts-ignore
   const Component = Plots[type] || Graphs[type];
   const ref = useRef<unknown>();
+  const { onReady } = config ?? {};
 
   return (
     <ErrorBoundary>
@@ -156,6 +158,7 @@ export const Chart = ({ type, config, showExportBtn = false }: ChartProps) => {
       <Component
         {...config}
         onReady={(instance: unknown) => {
+          onReady?.(instance);
           ref.current = instance;
         }}
       />
