@@ -271,13 +271,16 @@ options:
 
 ### Allowed methods
 * dv.current()
-* dv.pages(source)
-* dv.pagePaths(source)
+* dv.pages(source?)
+* dv.pagePaths(source?)
 * dv.page(path)
 * dv.array(value)
 * dv.isArray(value)
 * dv.date(text)
-* dv.fileLink(path, [embed?], [display-name])
+* dv.fileLink(path, embed?, display-name?)
+* dv.date(pathlike)
+* dv.query(source, settings?)
+* dv.io
 
 See [Dataview Codeblock Reference](https://blacksmithgu.github.io/obsidian-dataview/api/code-reference/)
 

@@ -182,8 +182,8 @@ const dataViewApiProxy = function (api: DataviewApi, currentFilePath: string) {
         date: function (pathlike: string | Link | DateTime): DateTime | null {
             return api.date(pathlike);
         },
-        query(source: string | Query, originFile?: string, settings?: QueryApiSettings): Promise<Result<QueryResult, string>> {
-            return api.query(source, originFile, settings);
+        query(source: string | Query, settings?: QueryApiSettings): Promise<Result<QueryResult, string>> {
+            return api.query(source, currentFilePath, settings);
         },
         io: api.io
     }
