@@ -5,8 +5,9 @@ import { getTheme } from '@antv/g2';
 import { ChartProps, DataType } from "./components/Chart";
 import ChartsViewPlugin from "./main";
 import { getWordCount, parseCsv } from "./tools";
-import { DataviewApi, Link, DateTime, Literal } from "obsidian-dataview";
+import { DataviewApi, Link, DateTime, Literal, Query, Result } from "obsidian-dataview";
 import { DataArray } from "obsidian-dataview/lib/api/data-array";
+import { QueryApiSettings, QueryResult } from "obsidian-dataview/lib/api/plugin-api";
 
 const functionRegex = /^\s*function\s*.*\(.*\)\s*\{[\w\W]*\}\s*/i;
 
@@ -183,7 +184,11 @@ const dataViewApiProxy = function (api: DataviewApi, currentFilePath: string) {
         },
 		execute: function(query?: string): DataArray<any> {
 			return api.execute(query);
-		}
+		},
+        query(source: string | Query, originFile?: string, settings?: QueryApiSettings): Promise<Result<QueryResult, string>> {
+            return api.query(source, originFile, settings);
+        },
+        io: api.io
     }
 };
 
