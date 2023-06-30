@@ -180,7 +180,10 @@ const dataViewApiProxy = function (api: DataviewApi, currentFilePath: string) {
         },
         date: function (pathlike: string | Link | DateTime): DateTime | null {
             return api.date(pathlike);
-        }
+        },
+		execute: function(query?: string): DataArray<any> {
+			return api.execute(query);
+		}
     }
 };
 
