@@ -233,7 +233,7 @@ export class ChartWizardModal extends Modal {
 
       for (let i = 0; i < this.valueNumber; i++) {
         const valueData = (this.dataValues[i].value ?? [])[index];
-        valueData !== undefined && (obj[this.dataValues[i].field] = (Number(valueData) ? Number(valueData) : valueData));
+        valueData !== undefined && (obj[this.dataValues[i].field] = (isNaN(Number(valueData)) ? valueData : Number(valueData)));
       }
 
       const serieData = (this.dataSeries.value ?? [])[index];
