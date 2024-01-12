@@ -36,7 +36,7 @@ export async function parseConfig(content: string, plugin: ChartsViewPlugin, sou
     const config = (type === "MultiView" || type === "Mix") ?
         await parseMultiViewConfig(dataProps, data, options, plugin, sourcePath)
         :
-        { data: await loadFromFile(data, plugin, sourcePath), ...customOptions(options, plugin) };
+        { data: await loadFromFile(data, plugin, sourcePath, options), ...customOptions(options, plugin) };
 
     //@ts-ignore
     const useDefaultBgColor = config.theme?.background === undefined && config.theme?.styleSheet?.backgroundColor === undefined;
@@ -135,17 +135,17 @@ async function parseMultiViewConfig(dataProps: DataProps, data: DataType, option
     }
 
     for (const v of temp.values()) {
-        views.push({ data: await loadFromFile(v["data"], plugin, sourcePath) || data, ...customOptions(stringToFunction(v["options"] as Options || {}), plugin) });
+        views.push({ data: await loadFromFile(v["data"], plugin, sourcePath, options) || data, ...customOptions(stringToFunction(v["options"] as Options || {}), plugin) });
     }
 
     return { views, ...options };
 }
 
-async function loadFromFile(data: DataOptionType, plugin: ChartsViewPlugin, sourcePath: string): Promise<DataType> {
+async function loadFromFile(data: DataOptionType, plugin: ChartsViewPlugin, sourcePath: string, options: Options): Promise<DataType> {
     if (typeof data === "string") {
         if (data.startsWith("wordcount:")) {
             const file = data.replace("wordcount:", "");
-            return loadFromMdWordCount(file.length > 0 ? file : (plugin.app.vault.getAbstractFileByPath(sourcePath) as TFile).basename, plugin);
+            return loadFromMdWordCount(file.length > 0 ? file : (plugin.app.vault.getAbstractFileByPath(sourcePath) as TFile).basename, plugin, options);
         } else if (data.startsWith("dataviewjs:")) {
             return loadFromDataViewPlugin(data.replace("dataviewjs:", ""), plugin, sourcePath);
         } else {
@@ -202,7 +202,7 @@ async function loadFromDataViewPlugin(content: string, plugin: ChartsViewPlugin,
     }
 }
 
-async function loadFromMdWordCount(fileName: string, plugin: ChartsViewPlugin): Promise<DataType> {
+async function loadFromMdWordCount(fileName: string, plugin: ChartsViewPlugin, options: Options): Promise<DataType> {
     const fileOrPaths = fileName.split(",");
     const contents: Array<string> = [];
     for (const file of plugin.app.vault.getMarkdownFiles()) {
@@ -214,7 +214,13 @@ async function loadFromMdWordCount(fileName: string, plugin: ChartsViewPlugin): 
     if (contents.length == 0) {
         throw new Error("No words found.");
     }
-    return getWordCount(contents.join("\n"), plugin.settings.wordCountFilter);
+    const wordCount = getWordCount(contents.join("\n"), plugin.settings.wordCountFilter);
+    const { minWordCount } = options;
+    if (typeof minWordCount === 'number') {
+        delete options.minWordCount;
+        return wordCount.filter(item => item.count >= minWordCount);
+    }
+    return wordCount;
 }
 
 function containedParent(folder: TFolder, fileOrPaths: Array<string>): boolean {

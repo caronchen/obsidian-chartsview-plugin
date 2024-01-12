@@ -1,7 +1,10 @@
 import Papa  from "papaparse";
 import { App, TFolder, Vault, Editor } from "obsidian";
 
-type WordCount = Record<string, string | number>;
+type WordCount = {
+    word: string;
+    count: number;
+};
 
 export function insertEditor(editor: Editor, data: string): void {
     editor.somethingSelected
