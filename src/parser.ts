@@ -4,7 +4,7 @@ import * as Graphs from '@ant-design/graphs';
 import { getTheme } from '@antv/g2';
 import { ChartProps, DataType } from "./components/Chart";
 import ChartsViewPlugin from "./main";
-import { getWordCount, parseCsv } from "./tools";
+import { AsyncFunction, getWordCount, parseCsv } from "./tools";
 import { DataviewApi, Link, DateTime, Literal, Query, Result } from "obsidian-dataview";
 import { DataArray } from "obsidian-dataview/lib/api/data-array";
 import { QueryApiSettings, QueryResult } from "obsidian-dataview/lib/api/plugin-api";
@@ -193,7 +193,9 @@ async function loadFromDataViewPlugin(content: string, plugin: ChartsViewPlugin,
     if (plugin.app.plugins.enabledPlugins.has("dataview")) {
         const api: DataviewApi = plugin.app.plugins.plugins.dataview?.api;
         if (api) {
-            return new Function("dv", content).call(undefined, dataViewApiProxy(api, sourcePath));
+            const invoke = new AsyncFunction("dv", content);
+            const dv = dataViewApiProxy(api, sourcePath);
+            return await invoke(dv);
         } else {
             throw new Error(`Obsidian Dataview is not ready.`);
         }

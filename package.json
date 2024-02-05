@@ -1,6 +1,6 @@
 {
   "name": "obsidian-chartsview-plugin",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "description": "Data visualization solution in Obsidian based on Ant Design Charts.",
   "main": "main.js",
   "scripts": {

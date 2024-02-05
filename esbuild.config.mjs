@@ -21,7 +21,7 @@ esbuild.build({
 	external: ['obsidian', 'electron', ...builtins],
 	format: 'cjs',
 	watch: !prod,
-	target: 'es2016',
+	target: 'es2017',
 	logLevel: "info",
 	sourcemap: prod ? false : 'inline',
 	treeShaking: true,

@@ -6,6 +6,8 @@ type WordCount = {
     count: number;
 };
 
+export const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+
 export function insertEditor(editor: Editor, data: string): void {
     editor.somethingSelected
     ?
