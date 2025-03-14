@@ -147,7 +147,7 @@ async function loadFromFile(data: DataOptionType, plugin: ChartsViewPlugin, sour
             const file = data.replace("wordcount:", "");
             return loadFromMdWordCount(file.length > 0 ? file : (plugin.app.vault.getAbstractFileByPath(sourcePath) as TFile).basename, plugin, options);
         } else if (data.startsWith("dataviewjs:")) {
-            return loadFromDataViewPlugin(data.replace("dataviewjs:", ""), plugin, sourcePath);
+            return loadFromDataviewPlugin(data.replace("dataviewjs:", ""), plugin, sourcePath);
         } else {
             return loadFromCsv(data, plugin);
         }
@@ -156,7 +156,7 @@ async function loadFromFile(data: DataOptionType, plugin: ChartsViewPlugin, sour
     }
 }
 
-const dataViewApiProxy = function (api: DataviewApi, currentFilePath: string) {
+const dataviewApiProxy = function (api: DataviewApi, currentFilePath: string) {
     return {
         pagePaths: function (query?: string): DataArray<string> {
             return api.pagePaths(query, currentFilePath);
@@ -189,16 +189,12 @@ const dataViewApiProxy = function (api: DataviewApi, currentFilePath: string) {
     }
 };
 
-async function loadFromDataViewPlugin(content: string, plugin: ChartsViewPlugin, sourcePath: string): Promise<DataType> {
-    if (plugin.app.plugins.enabledPlugins.has("dataview")) {
-        const api: DataviewApi = plugin.app.plugins.plugins.dataview?.api;
-        if (api) {
-            const invoke = new AsyncFunction("dv", content);
-            const dv = dataViewApiProxy(api, sourcePath);
-            return await invoke(dv);
-        } else {
-            throw new Error(`Obsidian Dataview is not ready.`);
-        }
+async function loadFromDataviewPlugin(content: string, plugin: ChartsViewPlugin, sourcePath: string): Promise<DataType> {
+    const api: DataviewApi = plugin.app.plugins.getPlugin('dataview')?.api;
+    if (api) {
+        const invoke = new AsyncFunction("dv", content);
+        const dv = dataviewApiProxy(api, sourcePath);
+        return await invoke(dv);
     } else {
         throw new Error(`Obsidian Dataview is required.`);
     }
