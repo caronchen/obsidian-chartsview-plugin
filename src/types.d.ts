@@ -5,13 +5,12 @@ import { DataviewInlineApi } from "obsidian-dataview/lib/api/inline-api";
 declare module "obsidian" {
   interface App {
     plugins: {
-      enabledPlugins: Set<string>;
-      plugins: {
-        [id: string]: any;
-        dataview?: {
-          api?: DataviewApi;
-        };
-      };
+      getPlugin<Id extends keyof Plugins>(id: Id): Plugins[Id] | null;
+    }
+  }
+  interface Plugins {
+    dataview: {
+      api?: DataviewApi;
     }
   }
   interface MetadataCache {
