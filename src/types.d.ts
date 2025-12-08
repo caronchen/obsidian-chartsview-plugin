@@ -1,11 +1,9 @@
 import "obsidian";
 import { DataviewApi } from "obsidian-dataview";
-import { DataviewInlineApi } from "obsidian-dataview/lib/api/inline-api";
 
 declare module "obsidian" {
   interface App {
     plugins: {
-      enabledPlugins: Set<string>;
       plugins: {
         [id: string]: any;
         dataview?: {
