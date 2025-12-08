@@ -185,17 +185,18 @@ const dataViewApiProxy = function (api: DataviewApi, currentFilePath: string) {
         query(source: string | Query, settings?: QueryApiSettings): Promise<Result<QueryResult, string>> {
             return api.query(source, currentFilePath, settings);
         },
-        io: api.io
+        io: api.io,
+        func: api.func
     }
 };
 
 async function loadFromDataViewPlugin(content: string, plugin: ChartsViewPlugin, sourcePath: string): Promise<DataType> {
-            const api: DataviewApi = plugin.app.plugins.plugins.dataview?.api;
-        if (api) {
-            const invoke = new AsyncFunction("dv", content);
-            const dv = dataViewApiProxy(api, sourcePath);
-            return await invoke(dv);
-            } else {
+    const api: DataviewApi = plugin.app.plugins.plugins.dataview?.api;
+    if (api) {
+        const invoke = new AsyncFunction("dv", content);
+        const dv = dataViewApiProxy(api, sourcePath);
+        return await invoke(dv);
+    } else {
         throw new Error(`Obsidian Dataview is required.`);
     }
 }
