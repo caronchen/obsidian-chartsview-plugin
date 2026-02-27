@@ -4,7 +4,7 @@ import * as Graphs from '@ant-design/graphs';
 import { getTheme } from '@antv/g2';
 import { ChartProps, DataType } from "./components/Chart";
 import ChartsViewPlugin from "./main";
-import { AsyncFunction, getWordCount, parseCsv } from "./tools";
+import { AsyncFunction, getWordCount, parseCsv, parseMarkdownTablesWithBlockIds } from "./tools";
 import { DataviewApi, Link, DateTime, Literal, Query, Result } from "obsidian-dataview";
 import { DataArray } from "obsidian-dataview/lib/api/data-array";
 import { QueryApiSettings, QueryResult } from "obsidian-dataview/lib/api/plugin-api";
@@ -148,6 +148,8 @@ async function loadFromFile(data: DataOptionType, plugin: ChartsViewPlugin, sour
             return loadFromMdWordCount(file.length > 0 ? file : (plugin.app.vault.getAbstractFileByPath(sourcePath) as TFile).basename, plugin, options);
         } else if (data.startsWith("dataviewjs:")) {
             return loadFromDataViewPlugin(data.replace("dataviewjs:", ""), plugin, sourcePath);
+        } else if (data.startsWith("mdtable:")) {
+            return loadFromMarkdownTable(data, plugin, sourcePath);
         } else {
             return loadFromCsv(data, plugin);
         }
@@ -250,4 +252,23 @@ async function loadFromCsv(data: string, plugin: ChartsViewPlugin): Promise<Data
         return value[0];
     }
     return value;
+}
+
+async function loadFromMarkdownTable(data: string, plugin: ChartsViewPlugin, sourcePath: string): Promise<DataType> {
+    const rawId = data.replace("mdtable:", "").trim();
+    const blockId = rawId.startsWith("^") ? rawId.slice(1) : rawId;
+    if (!blockId) {
+        throw new Error("Markdown table block ID is required.");
+    }
+    const file = plugin.app.vault.getAbstractFileByPath(sourcePath);
+    if (!(file instanceof TFile)) {
+        throw new Error(`Source file not found: ${sourcePath}`);
+    }
+    const content = await plugin.app.vault.read(file);
+    const tables = parseMarkdownTablesWithBlockIds(content);
+    const selected = tables.find(table => table.blockId === blockId);
+    if (!selected) {
+        throw new Error(`Markdown table not found for block ID: ^${blockId}`);
+    }
+    return selected.rows;
 }

@@ -1,0 +1,61 @@
+---
+alwaysApply: true
+---
+# Git Workflow Guardrails (Strict)
+
+## Core Rule
+- NEVER commit directly to `main` or `master`.
+- NEVER push directly to `main` or `master`.
+- All changes MUST be made on a feature branch.
+
+---
+
+## Before Making Changes
+
+1. Check current branch.
+2. If on default branch (`main`/`master`):
+   - Run:
+     git pull
+     git checkout -b feature/<short-descriptive-name>
+3. If already on a feature branch:
+   - Continue working on that branch.
+
+Branch naming:
+- feature/<name> | fix/<name> | chore/<name> | refactor/<name> | hotfix/<name>
+
+---
+
+## Committing
+- Stage changes explicitly.
+- Use clear commit messages.
+
+---
+
+## Pushing
+- Push feature branch only:
+  git push -u origin <branch-name>
+- NEVER push to `main` or `master`.
+
+---
+
+## Pull Request Rules
+- PR base must be the repo default branch (`main` or `master`).
+- Sync branch before PR:
+  git fetch --prune
+  git rebase origin/<default-branch>  # or merge if preferred
+
+---
+
+## After PR Is Merged
+1. git checkout <default-branch>
+2. git pull
+3. git branch -d <branch-name>
+4. git fetch --prune
+
+---
+
+## Hard Prohibitions
+- No commits on default branch.
+- No direct pushes to protected branches.
+- No merging without a PR.
+- No force-push to default branch.

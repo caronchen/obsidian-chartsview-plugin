@@ -40,6 +40,79 @@ export function parseCsv(content: string): unknown {
     }).data;
 }
 
+type MarkdownTableParseResult = {
+    blockId: string;
+    columns: string[];
+    rows: Record<string, unknown>[];
+};
+
+function isTableRow(line: string): boolean {
+    return /^\s*\|.*\|\s*$/.test(line);
+}
+
+function isSeparatorRow(line: string): boolean {
+    return /^\s*\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)+\|?\s*$/.test(line);
+}
+
+function isBlockIdRow(line: string): boolean {
+    return /^\s*\^[A-Za-z0-9_-]+\s*$/.test(line);
+}
+
+function splitRowCells(line: string): string[] {
+    const trimmed = line.trim().replace(/^\|/, "").replace(/\|$/, "");
+    return trimmed.split("|").map(cell => cell.trim());
+}
+
+function coerceCellValue(value: string): string | number {
+    const trimmed = value.trim();
+    if (trimmed.length === 0) {
+        return "";
+    }
+    const numberValue = Number(trimmed);
+    if (Number.isFinite(numberValue) && /^[-+]?\d*\.?\d+(e[-+]?\d+)?$/i.test(trimmed)) {
+        return numberValue;
+    }
+    return trimmed;
+}
+
+export function parseMarkdownTablesWithBlockIds(content: string): MarkdownTableParseResult[] {
+    const lines = content.split(/\r?\n/);
+    const tables: MarkdownTableParseResult[] = [];
+    let i = 0;
+
+    while (i < lines.length) {
+        if (isTableRow(lines[i]) && i + 1 < lines.length && isSeparatorRow(lines[i + 1])) {
+            const headerLine = lines[i];
+            const columns = splitRowCells(headerLine);
+            const rows: Record<string, unknown>[] = [];
+            i += 2;
+            while (i < lines.length && isTableRow(lines[i])) {
+                const cells = splitRowCells(lines[i]);
+                const row: Record<string, unknown> = {};
+                for (let c = 0; c < columns.length; c++) {
+                    row[columns[c]] = coerceCellValue(cells[c] ?? "");
+                }
+                rows.push(row);
+                i += 1;
+            }
+            let j = i;
+            while (j < lines.length && lines[j].trim() === "") {
+                j += 1;
+            }
+            if (j < lines.length && isBlockIdRow(lines[j])) {
+                const blockId = lines[j].trim().slice(1);
+                if (columns.length > 0) {
+                    tables.push({ blockId, columns, rows });
+                }
+            }
+            continue;
+        }
+        i += 1;
+    }
+
+    return tables;
+}
+
 /**
  * From better-word-count by Luke Leppan (https://github.com/lukeleppan/better-word-count)
  * @returns 
