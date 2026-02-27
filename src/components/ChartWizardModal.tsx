@@ -403,10 +403,11 @@ export class ChartWizardModal extends Modal {
       );
 
     if (preferences.seriesFieldKey) {
+      const seriesOptions = { "": "", ...columnOptions };
       new Setting(this.contentEl)
         .setName(`Series (${preferences.seriesFieldKey})`)
         .addDropdown(dropdown => dropdown
-          .addOptions(columnOptions)
+          .addOptions(seriesOptions)
           .setValue(this.dataSeries.field ?? "")
           .onChange(value => {
             this.dataSeries.field = value;
@@ -430,7 +431,7 @@ export class ChartWizardModal extends Modal {
     const preferences = this.getChartPreferences();
 
     if (this.dataSource === 'csv' || this.dataSource === 'md-table') {
-      if (preferences.seriesFieldKey) {
+      if (preferences.seriesFieldKey && this.dataSeries.field) {
         this.chartSetting.config[preferences.seriesFieldKey] = this.dataSeries.field;
       }
       this.chartSetting.config[preferences.labelsFieldKey] = this.dataLabels.field;
@@ -691,7 +692,9 @@ ${stringifyYaml(options)}\
           this.dataValues[i].field = columns[0];
         }
       }
-      if (!this.dataSeries.field || !columns.includes(this.dataSeries.field)) {
+      if (this.dataSeries.field === undefined || this.dataSeries.field === null) {
+        this.dataSeries.field = columns[0];
+      } else if (this.dataSeries.field !== "" && !columns.includes(this.dataSeries.field)) {
         this.dataSeries.field = columns[0];
       }
     }
