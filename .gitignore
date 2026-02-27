@@ -1,5 +1,7 @@
 # vscode
 .vscode 
+# Cursor
+.cursor
 
 # Intellij
 *.iml

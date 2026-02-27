@@ -38,6 +38,14 @@ Branch naming:
 
 ---
 
+## Creating a PR
+- After pushing the feature branch, open a PR immediately.
+- Preferred: use GitHub CLI:
+  gh pr create --base <default-branch> --head <branch-name>
+- If CLI is not available, create the PR in the GitHub UI.
+
+---
+
 ## Pull Request Rules
 - PR base must be the repo default branch (`main` or `master`).
 - Sync branch before PR:
