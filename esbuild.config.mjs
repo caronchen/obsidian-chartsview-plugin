@@ -10,8 +10,7 @@ if you want to view the source, please visit the github repository of this plugi
 `;
 
 const prod = (process.argv[2] === 'production');
-
-esbuild.build({
+const sharedConfig = {
 	banner: {
 		js: banner,
 	},
@@ -20,10 +19,16 @@ esbuild.build({
 	minify: prod,
 	external: ['obsidian', 'electron', ...builtins],
 	format: 'cjs',
-	watch: !prod,
 	target: 'es2017',
 	logLevel: "info",
 	sourcemap: prod ? false : 'inline',
 	treeShaking: true,
 	outfile: 'main.js',
-}).catch(() => process.exit(1));
+};
+
+if (prod) {
+	esbuild.build(sharedConfig).catch(() => process.exit(1));
+} else {
+	const ctx = await esbuild.context(sharedConfig);
+	await ctx.watch();
+}
