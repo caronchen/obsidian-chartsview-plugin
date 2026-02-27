@@ -3,7 +3,7 @@ import React from "react";
 import { render, unmountComponentAtNode } from 'react-dom';
 import { ChartsViewPluginSettings } from "src/settings";
 import { Chart, ChartProps } from "./Chart";
-import { insertEditor, parseCsv } from "src/tools";
+import { insertEditor, parseCsv, parseMarkdownTablesWithBlockIds } from "src/tools";
 
 type DataType = {
   field: string;
@@ -19,7 +19,7 @@ type Preferences = {
   series?: DataType;
 };
 
-type DataSource = 'manual' | 'csv';
+type DataSource = 'manual' | 'csv' | 'md-table';
 
 const DEFAULT: Preferences = {
   labelsFieldKey: 'xField',
@@ -36,6 +36,7 @@ const DEFAULT_CHART_TYPE = 'Area';
 const DATA_SOURCE_LABELS: Record<DataSource, string> = {
   manual: 'Manual',
   csv: 'CSV',
+  'md-table': 'Markdown Table',
 };
 
 const ValueNumbers: Record<string, string> = {
@@ -91,6 +92,12 @@ export class ChartWizardModal extends Modal {
   csvColumnsSource: string | null;
   csvPreviewData: Record<string, unknown>[];
   csvError: string | null;
+  mdTableBlockId: string | null;
+  mdTableBlockIds: string[];
+  mdTableColumns: string[];
+  mdTableColumnsSource: string | null;
+  mdTablePreviewData: Record<string, unknown>[];
+  mdTableError: string | null;
   /*
   interaction: { operator: string; field: string; enabled: boolean };
   */
@@ -114,6 +121,12 @@ export class ChartWizardModal extends Modal {
     this.csvColumnsSource = null;
     this.csvPreviewData = [];
     this.csvError = null;
+    this.mdTableBlockId = null;
+    this.mdTableBlockIds = [];
+    this.mdTableColumns = [];
+    this.mdTableColumnsSource = null;
+    this.mdTablePreviewData = [];
+    this.mdTableError = null;
     /*
     this.interaction = { operator: 'default', field: this.dataLabels.field, enabled: false };
     */
@@ -130,6 +143,13 @@ export class ChartWizardModal extends Modal {
       const currentSource = this.selectedCsvFiles.find(Boolean) ?? null;
       if (this.csvColumns.length === 0 || this.csvColumnsSource !== currentSource) {
         void this.updateCsvColumns();
+      } else {
+        this.renderChart();
+      }
+    } else if (this.dataSource === 'md-table') {
+      const currentSource = this.mdTableBlockId ?? null;
+      if (this.mdTableColumns.length === 0 || this.mdTableColumnsSource !== currentSource) {
+        void this.updateMarkdownTableColumns();
       } else {
         this.renderChart();
       }
@@ -173,6 +193,8 @@ export class ChartWizardModal extends Modal {
 
     if (this.dataSource === 'csv') {
       this.createCsvSettings();
+    } else if (this.dataSource === 'md-table') {
+      this.createMarkdownTableSettings();
     } else {
       this.createManualSettings();
     }
@@ -306,7 +328,53 @@ export class ChartWizardModal extends Modal {
 
     const preferences = this.getChartPreferences();
     const columnOptions = this.getCsvColumnOptions();
+    this.createColumnSettings(columnOptions, preferences);
 
+    if (this.csvError) {
+      new Setting(this.contentEl)
+        .setName("CSV Error")
+        .setDesc(this.csvError);
+    }
+  }
+
+  private createMarkdownTableSettings() {
+    const blockIdOptions = this.getMarkdownTableBlockIdOptions();
+    const blockIdKeys = Object.keys(blockIdOptions);
+    const hasBlockIds = blockIdKeys.length > 0;
+
+    if (!hasBlockIds) {
+      new Setting(this.contentEl)
+        .setName("Markdown Tables")
+        .setDesc("No markdown tables with block IDs found in the current file.");
+      return;
+    } else {
+      if (!this.mdTableBlockId) {
+        this.mdTableBlockId = blockIdKeys[0];
+      }
+      new Setting(this.contentEl)
+        .setName("Table Block ID")
+        .addDropdown(dropdown => dropdown
+          .addOptions(blockIdOptions)
+          .setValue(this.mdTableBlockId ?? "")
+          .onChange(value => {
+            this.mdTableBlockId = value;
+            void this.updateMarkdownTableColumns();
+          })
+        );
+    }
+
+    const preferences = this.getChartPreferences();
+    const columnOptions = this.getMarkdownTableColumnOptions();
+    this.createColumnSettings(columnOptions, preferences);
+
+    if (this.mdTableError) {
+      new Setting(this.contentEl)
+        .setName("Markdown Table Error")
+        .setDesc(this.mdTableError);
+    }
+  }
+
+  private createColumnSettings(columnOptions: Record<string, string>, preferences: Preferences) {
     for (let i = 0; i < this.valueNumber; i++) {
       new Setting(this.contentEl)
         .setName(i === 0 ? `Values (${preferences.valuesFieldKey})` : "")
@@ -346,12 +414,6 @@ export class ChartWizardModal extends Modal {
           })
         );
     }
-
-    if (this.csvError) {
-      new Setting(this.contentEl)
-        .setName("CSV Error")
-        .setDesc(this.csvError);
-    }
   }
 
   private renderChart() {
@@ -367,7 +429,7 @@ export class ChartWizardModal extends Modal {
     this.chartSetting.config = {};
     const preferences = this.getChartPreferences();
 
-    if (this.dataSource === 'csv') {
+    if (this.dataSource === 'csv' || this.dataSource === 'md-table') {
       if (preferences.seriesFieldKey) {
         this.chartSetting.config[preferences.seriesFieldKey] = this.dataSeries.field;
       }
@@ -375,7 +437,9 @@ export class ChartWizardModal extends Modal {
       this.chartSetting.config[preferences.valuesFieldKey] = (this.valueNumber === 1
         ? this.dataValues[0].field
         : this.dataValues.map(item => item.field));
-      this.chartSetting.config.data = this.csvPreviewData ?? [];
+      this.chartSetting.config.data = this.dataSource === 'csv'
+        ? (this.csvPreviewData ?? [])
+        : (this.mdTablePreviewData ?? []);
     } else {
       this.isNotEmpty(this.dataSeries.value) &&
         (this.chartSetting.config[preferences.seriesFieldKey] = this.dataSeries.field);
@@ -429,7 +493,9 @@ export class ChartWizardModal extends Modal {
     const type = this.chartSetting.type;
     const data = this.dataSource === 'csv'
       ? { data: this.selectedCsvFiles.filter(Boolean).join(", ") }
-      : { data: this.chartSetting.config.data };
+      : (this.dataSource === 'md-table'
+        ? { data: (this.mdTableBlockId ? `mdtable:^${this.mdTableBlockId}` : "") }
+        : { data: this.chartSetting.config.data });
     const options = { options: { ...this.chartSetting.config } };
     delete options.options.data;
 
@@ -512,6 +578,28 @@ ${stringifyYaml(options)}\
     return options;
   }
 
+  private getMarkdownTableBlockIdOptions(): Record<string, string> {
+    const options: Record<string, string> = {};
+    for (const blockId of this.mdTableBlockIds) {
+      options[blockId] = blockId;
+    }
+    if (Object.keys(options).length === 0) {
+      options[""] = "";
+    }
+    return options;
+  }
+
+  private getMarkdownTableColumnOptions(): Record<string, string> {
+    const options: Record<string, string> = {};
+    for (const column of this.mdTableColumns) {
+      options[column] = column;
+    }
+    if (Object.keys(options).length === 0) {
+      options[""] = "";
+    }
+    return options;
+  }
+
   private async updateCsvColumns() {
     this.csvColumns = [];
     this.csvColumnsSource = null;
@@ -539,27 +627,74 @@ ${stringifyYaml(options)}\
         const firstRow = this.csvPreviewData[0] as Record<string, unknown> | undefined;
         this.csvColumns = firstRow ? Object.keys(firstRow) : [];
         this.csvColumnsSource = firstFile;
-        if (this.csvColumns.length > 0) {
-          if (!this.dataLabels.field || !this.csvColumns.includes(this.dataLabels.field)) {
-            this.dataLabels.field = this.csvColumns[0];
-          }
-          for (let i = 0; i < this.valueNumber; i++) {
-            if (this.dataValues[i] === undefined) {
-              this.dataValues[i] = {} as DataType;
-            }
-            if (!this.dataValues[i].field || !this.csvColumns.includes(this.dataValues[i].field)) {
-              this.dataValues[i].field = this.csvColumns[0];
-            }
-          }
-          if (!this.dataSeries.field || !this.csvColumns.includes(this.dataSeries.field)) {
-            this.dataSeries.field = this.csvColumns[0];
-          }
-        }
+        this.syncFieldsWithColumns(this.csvColumns);
       }
     } catch (error) {
       this.csvError = `${error}`;
     }
     this.displayContent();
+  }
+
+  private async updateMarkdownTableColumns() {
+    this.mdTableColumns = [];
+    this.mdTableColumnsSource = null;
+    this.mdTablePreviewData = [];
+    this.mdTableError = null;
+
+    const file = this.app.workspace.getActiveFile();
+    if (!file) {
+      this.mdTableError = "No active file found.";
+      this.displayContent();
+      return;
+    }
+
+    try {
+      const content = await this.app.vault.read(file);
+      const tables = parseMarkdownTablesWithBlockIds(content);
+      this.mdTableBlockIds = tables.map(table => table.blockId);
+      if (this.mdTableBlockIds.length === 0) {
+        this.mdTableError = "No markdown tables with block IDs found in the current file.";
+        this.displayContent();
+        return;
+      }
+      if (!this.mdTableBlockId || !this.mdTableBlockIds.includes(this.mdTableBlockId)) {
+        this.mdTableBlockId = this.mdTableBlockIds[0];
+      }
+
+      const selected = tables.find(table => table.blockId === this.mdTableBlockId);
+      if (!selected) {
+        this.mdTableError = `Markdown table not found for block ID: ^${this.mdTableBlockId}`;
+        this.displayContent();
+        return;
+      }
+
+      this.mdTableColumns = selected.columns;
+      this.mdTablePreviewData = selected.rows;
+      this.mdTableColumnsSource = this.mdTableBlockId;
+      this.syncFieldsWithColumns(this.mdTableColumns);
+    } catch (error) {
+      this.mdTableError = `${error}`;
+    }
+    this.displayContent();
+  }
+
+  private syncFieldsWithColumns(columns: string[]) {
+    if (columns.length > 0) {
+      if (!this.dataLabels.field || !columns.includes(this.dataLabels.field)) {
+        this.dataLabels.field = columns[0];
+      }
+      for (let i = 0; i < this.valueNumber; i++) {
+        if (this.dataValues[i] === undefined) {
+          this.dataValues[i] = {} as DataType;
+        }
+        if (!this.dataValues[i].field || !columns.includes(this.dataValues[i].field)) {
+          this.dataValues[i].field = columns[0];
+        }
+      }
+      if (!this.dataSeries.field || !columns.includes(this.dataSeries.field)) {
+        this.dataSeries.field = columns[0];
+      }
+    }
   }
 
   onClose() {
