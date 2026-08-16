@@ -71,6 +71,7 @@ const ChartPreferences: Record<string, Preferences> = {
   'Histogram': { labelsFieldKey: 'xField', valuesFieldKey: 'binField', seriesFieldKey: '' },
   'WordCloud': { labelsFieldKey: 'wordField', valuesFieldKey: 'weightField', seriesFieldKey: '' },
   'Pie': { labelsFieldKey: 'colorField', valuesFieldKey: 'angleField', seriesFieldKey: '' },
+  'Stock': { labelsFieldKey: 'xField', valuesFieldKey: 'yField', seriesFieldKey: '' },
 };
 
 export class ChartWizardModal extends Modal {
