@@ -38,6 +38,11 @@ export async function parseConfig(content: string, plugin: ChartsViewPlugin, sou
         :
         { data: await loadFromFile(data, plugin, sourcePath, options), ...customOptions(options, plugin) };
 
+    // for stocks xaxis can either be date (eg.2026-11-14) or time(11:13) 
+    if (type === "Stock") {
+        applyStockTimeMask(config as Record<string, unknown>);
+    }
+
     //@ts-ignore
     const useDefaultBgColor = config.theme?.background === undefined && config.theme?.styleSheet?.backgroundColor === undefined;
 
@@ -58,6 +63,34 @@ export async function parseConfig(content: string, plugin: ChartsViewPlugin, sou
         showExportBtn: plugin.settings.showExportBtn,
         config
     };
+}
+
+const TIME_VALUE_PATTERN = /\d{1,2}:\d{2}/;
+
+// g2plot's Stock timeCat scale defaults to a date-only 'YYYY-MM-DD' mask, which hides intraday granularity.
+function applyStockTimeMask(config: Record<string, unknown>): void {
+    const xField = config.xField as string;
+    const data = config.data;
+    if (!xField || !Array.isArray(data)) {
+        return;
+    }
+
+    const meta = (config.meta ?? {}) as Record<string, Record<string, unknown>>;
+    const xFieldMeta = meta[xField] ?? {};
+    if (xFieldMeta.mask || xFieldMeta.formatter) {
+        return;
+    }
+
+    const hasTimeComponent = data.some(item => {
+        const value = (item as Record<string, unknown>)?.[xField];
+        return typeof value === "string" && (value.includes("T") || TIME_VALUE_PATTERN.test(value));
+    });
+    if (!hasTimeComponent) {
+        return;
+    }
+
+    meta[xField] = { ...xFieldMeta, mask: "YYYY-MM-DD HH:mm" };
+    config.meta = meta;
 }
 
 function stringToFunction(options: Options): Options {
